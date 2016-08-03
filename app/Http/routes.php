@@ -1,15 +1,17 @@
 <?php
 
+use Illuminate\Http\Response;
+
 //
 Route::get( '/', function () {
     return view( 'welcome' );
 });
 
 // все категории
-Route::get( '/api/categories/all', function () {
+// Route::get( '/api/categories/all', function () {
     // return 'All categoies';
-
-} );
+// } );
+Route::get('/api/categories/all', 'SubjectCategoryController@apiGetAll');  
 
 // массив вебинаров указанной категории
 Route::get( '/api/categories/webinars', function () {
