@@ -3,7 +3,7 @@
 return [
     'env' => env('APP_ENV', 'production'),
     'debug' => env('APP_DEBUG', TRUE),
-    'url' => env('APP_URL', 'http://localhost'),
+    'url' => env('APP_URL', 'http://booklya.l'),
     'timezone' => 'UTC',
     'locale' => 'ru',
     'fallback_locale' => 'en',
