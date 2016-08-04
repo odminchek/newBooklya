@@ -7,5 +7,5 @@ Route::get( '/', function () {
     return view( 'welcome' );
 });
 
-// Это работает для первого роута, но сделаем более правильно
 Route::get('/api/categories/all', 'ApiController@categoriesGetAll');  
+Route::get('/api/categories/webinars', 'ApiController@webinarsFromCategory');  // ?alias=somethink
