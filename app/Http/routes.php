@@ -2,31 +2,10 @@
 
 use Illuminate\Http\Response;
 
-//
+// Это было из коробки, для главной страницы
 Route::get( '/', function () {
     return view( 'welcome' );
 });
 
-// все категории
-// Route::get( '/api/categories/all', function () {
-    // return 'All categoies';
-// } );
-Route::get('/api/categories/all', 'SubjectCategoryController@apiGetAll');  
-
-// массив вебинаров указанной категории
-// Route::get( '/api/categories/webinars', function () {
-// 	// /api/categories/webinars?alias=somethink
-//     return 'Webinars from category';
-// } );
-
-// один вебинар
-Route::get( '/api/webinar/one', function () {
-	// /api/webinar/one?alias=somethink
-    return 'One webinar';
-} );
-
-
-
-
-
-
+// Это работает для первого роута, но сделаем более правильно
+Route::get('/api/categories/all', 'ApiController@categoriesGetAll');  
