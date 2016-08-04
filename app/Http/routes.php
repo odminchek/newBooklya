@@ -14,10 +14,10 @@ Route::get( '/', function () {
 Route::get('/api/categories/all', 'SubjectCategoryController@apiGetAll');  
 
 // массив вебинаров указанной категории
-Route::get( '/api/categories/webinars', function () {
-	// /api/categories/webinars?alias=somethink
-    return 'Webinars from category';
-} );
+// Route::get( '/api/categories/webinars', function () {
+// 	// /api/categories/webinars?alias=somethink
+//     return 'Webinars from category';
+// } );
 
 // один вебинар
 Route::get( '/api/webinar/one', function () {
