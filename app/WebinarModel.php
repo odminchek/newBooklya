@@ -4,7 +4,7 @@ namespace App;
 
 use Jenssegers\Mongodb\Eloquent\Model as Eloquent;
 
-class SubjectCategoryModel extends Eloquent
+class WebinarModel extends Eloquent
 {
 	protected $collection = 'webinar';
 }
