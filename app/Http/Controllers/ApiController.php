@@ -14,6 +14,8 @@ use App\SubjectModel;
 
 use App\WebinarModel;
 
+use App\UserModel;
+
 class ApiController extends Controller
 {
     public function categoriesGetAll()
@@ -125,5 +127,100 @@ class ApiController extends Controller
 	    {
 	    	Log::critical( 'webinarsFromCategory: Exception: ' . $e->getMessage() );
 	    }
+    }
+
+    // public function oneWebinarWithCatAndSub( Request $request )
+    // {
+    // 	try
+    // 	{
+    // 		// проверяем передан ли alias и корректно ли передан
+	   //  	if( !$alias = strip_tags( stripslashes( trim( $request->input( 'alias' ) ) ) )  
+	   //  		OR !is_string( $alias ) 
+	   //  		OR empty( $alias ) 
+	   //  		):
+	   //  		// пишем лог
+	   //  		Log::error( 'oneWebinarWithCatAndSub: Некорректный alias!' );
+	   //  		// возвращаем пустой массив
+	   //  		return json_encode( array() );
+	   //  	endif;
+
+	   //  	$alias = '/' . $alias;
+
+	   //  	// эта херня работает (через точку элемент вложенного массива)
+	   //  	$webinar = WebinarModel::where( 'seo.alias', '=', $alias )->get()->toArray();
+
+	   //  	// $webinar = $webinar[ 0 ];
+
+	    	
+
+	   //  	$subjectId = $webinar[ 0 ][ 'subject' ];
+
+	   //  	var_dump( $subjectId );
+
+	   //  	// $subject = SubjectModel::where( '_id', '=', $subjectId )->get()/*->toArray()*/;
+	   //  	$subject = SubjectModel::find( $subjectId )/*->get()->toArray()*/;
+
+	   //  	echo '<pre>';
+	   //  	var_dump( $subject );
+	   //  	echo '</pre>';
+
+	    	
+    // 	}
+    // 	catch( Exception $e )
+	   //  {
+	   //  	Log::critical( 'oneWebinarWithCatAndSub: Exception: ' . $e->getMessage() );
+	   //  }
+    // }
+
+    public function getExperts( Request $request )
+    {
+    	// проверяем передан ли alias и корректно ли передан
+    	if( !$alias = strip_tags( stripslashes( trim( $request->input( 'alias' ) ) ) )  
+    		OR !is_string( $alias ) 
+    		OR empty( $alias ) 
+    		):
+    		// пишем лог
+    		Log::error( 'getExperts: Некорректный alias!' );
+    		// возвращаем пустой массив
+    		return json_encode( array() );
+    	endif;
+
+    	// получаем категорию по алиасу и проверяем корректность получения
+    	if( !$subjectCategory = SubjectCategoryModel::where( 'alias', '=', $alias )->get()
+    		OR !$subjectCategory = $subjectCategory->toArray() 
+    		OR !is_array( $subjectCategory )
+    		OR empty( $subjectCategory )
+    		OR !isset( $subjectCategory[ 0 ] )
+    		OR !$subjectCategory = $subjectCategory[ 0 ]
+    		OR !is_array( $subjectCategory )
+    		OR empty( $subjectCategory )
+    		OR !isset( $subjectCategory[ "_id" ] )
+    		OR !$subjectCategoryId = $subjectCategory[ "_id" ]
+    		OR !is_string( $subjectCategoryId )
+    		OR empty( $subjectCategoryId )
+    		):
+    		// пишем лог
+    		Log::error( 'getExperts: Не получена subjectCategory!' );
+    		// возвращаем пустой массив
+    		return json_encode( array() );
+    	endif;
+
+    	// получаем экспертов этой категории и проверяем корректность получения
+    	if( !$experts = UserModel::where( 'userRoles', 'All', [ 'teacher' ] )->where( 'subjectsCategory', 'All', [ $subjectCategoryId ] )->get()
+    		OR !$experts = $experts->toArray()
+    		OR !is_array( $experts )
+    		OR empty( $experts )
+    		):
+    		// пишем лог
+    		Log::error( 'getExperts: Не получены эксперты для категории ' . $alias . '!' );
+    		// возвращаем пустой массив
+    		return json_encode( array() );
+    	endif;
+
+    	// если всё ок, засовываем в категорию её экспертов
+    	$subjectCategory[ 'experts' ] = $experts;
+
+    	// преобразуем в JSON и возвращаем
+    	return json_encode( $subjectCategory );
     }
 }
