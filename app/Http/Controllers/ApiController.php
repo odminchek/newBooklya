@@ -113,41 +113,6 @@ class ApiController extends Controller
     	return json_encode( $subjectCategory );
     }
 
-  //   public function oneWebinarWithCatAndSub( Request $request )
-  //   {
-		// // проверяем передан ли alias и корректно ли передан
-  //   	if( !$alias = strip_tags( stripslashes( trim( $request->input( 'alias' ) ) ) )  
-  //   		OR !is_string( $alias ) 
-  //   		OR empty( $alias ) 
-  //   		):
-  //   		// пишем лог
-  //   		$this->log( 'oneWebinarWithCatAndSub: Некорректный alias!' );
-  //   		// возвращаем пустой массив
-  //   		return json_encode( array() );
-  //   	endif;
-
-  //   	$alias = '/' . $alias;
-
-  //   	// эта херня работает (через точку элемент вложенного массива)
-  //   	$webinar = WebinarModel::where( 'seo.alias', '=', $alias )->get()->toArray();
-
-    	
-
-  //   	$subjectId = $webinar[ 0 ][ 'subject' ];
-
-  //   	// $subject = SubjectModel::where( '_id', '=',  $subjectId )->first();
-  //       // $subject = SubjectModel::find( $subjectId )/*->get()->toArray()*/;
-  //       $subject = SubjectModel::where( '_id', '=', '551d4530bfef316a3c8b7949' )->get();
-  //   	// $subject = SubjectModel::find( '551d4530bfef316a3c8b7949' )/*->get()->toArray()*/;
-  //       echo '<pre>';
-  //       var_dump( $subject );
-  //       echo '</pre>';
-
-
-
-
-  //   }
-
     public function getExperts( Request $request )
     {
     	// проверяем передан ли alias и корректно ли передан
@@ -199,28 +164,6 @@ class ApiController extends Controller
     	// преобразуем в JSON и возвращаем
     	return json_encode( $subjectCategory );
     }
-
-    // public function getOneExpert( Request $request )
-    // {
-    // 	проверяем передан ли id и корректно ли передан
-    // 	if( !$id = strip_tags( stripslashes( trim( $request->input( 'id' ) ) ) )  
-    // 		OR !is_string( $id ) 
-    // 		OR empty( $id )
-    // 		OR mb_strlen( $id ) != 24
-    //      OR !ctype_xdigit( $id )
-    // 		):
-    // 		// пишем лог
-    // 		Log::error( 'getOneExpert: Некорректный id эксперта!' );
-    // 		// возвращаем пустой массив
-    // 		return json_encode( array() );
-    // 	endif;
-
-    // 	echo '<pre>';
-    // 	var_dump( UserModel::where( '_id', '55d08122bfef31f6098bb2f1' )->get()->toArray() );
-    // 	// var_dump( UserModel::find( '55d08122bfef31f6098bb2f1' ) );
-    // 	// var_dump( UserModel::all() );
-    // 	echo '</pre>';
-    // }
 
     public function getArticlesFromCategory( Request $request )
     {
