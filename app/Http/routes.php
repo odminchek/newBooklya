@@ -18,3 +18,4 @@ Route::get( '/api/categories/experts', 'ApiController@getExperts' );  // ?alias=
 
 
 Route::get( '/api/article/category', 'ApiController@getArticlesFromCategory' );  // ?alias=somethink
+Route::get( '/api/article/one', 'ApiController@getArticleByAlias' );  // ?alias=somethink

@@ -273,4 +273,36 @@ class ApiController extends Controller
         // если всё ОК
         return json_encode( $articles );
     }
+
+    public function getArticleByAlias( Request $request )
+    {
+        // проверяем передан ли alias и корректно ли передан
+        if( !$alias = strip_tags( stripslashes( trim( $request->input( 'alias' ) ) ) )  
+            OR !is_string( $alias ) 
+            OR empty( $alias ) 
+            ):
+            // пишем лог
+            Log::error( 'getArticleByAlias: Некорректный alias!' );
+            // возвращаем пустой массив
+            return json_encode( array() );
+        endif;
+
+        // пробуем получить статью по алиасу и проверяем корректность получения
+        $alias = '/' . $alias;
+        if( !$article = ArticleModel::where( 'seo.alias', '=', $alias )->get()
+            OR !$article = $article->toArray()
+            OR !isset( $article[ 0 ] )
+            OR !$article = $article[ 0 ]
+            OR !is_array( $article )
+            OR empty( $article )
+            ):
+            // пишем лог
+            Log::error( 'getArticleByAlias: Статья с алиасом ' . $alias . ' не получена!' );
+            // возвращаем пустой массив
+            return json_encode( array() );
+        endif;
+
+        // если всё ОК
+        return json_encode( $article );
+    }
 }
