@@ -14,7 +14,7 @@ Route::get( '/api/categories/experts', 'ApiController@getExperts' );  // ?alias=
 // Route::get( '/api/expert/one', 'ApiController@getOneExpert' );  // ?id=mongo_id
 
 
-
+Route::get( '/api/article/profile', 'ApiController@getArticlesByUser' );  // ?id=mongo_id
 
 
 Route::get( '/api/article/category', 'ApiController@getArticlesFromCategory' );  // ?alias=somethink
