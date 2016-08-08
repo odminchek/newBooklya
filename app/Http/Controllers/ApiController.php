@@ -10,6 +10,7 @@ use App\SubjectModel;
 use App\WebinarModel;
 use App\UserModel;
 use App\ArticleModel;
+use App\FeedbackModel;
 
 class ApiController extends Controller
 {
@@ -328,6 +329,33 @@ class ApiController extends Controller
         endif;
 
         return json_encode( $articles );
+    }
+
+    public function getFeedbacksForUser( Request $request )
+    {
+        if( !$id = strip_tags( stripslashes( trim( $request->input( 'id' ) ) ) )  
+            OR !is_string( $id ) 
+            OR empty( $id )
+            OR mb_strlen( $id ) != 24
+            OR !ctype_xdigit( $id )
+            ):
+             // пишем лог
+            $this->log( 'getFeedbacksForUser: Некорректный id юзера!' );
+             // возвращаем пустой массив
+            return json_encode( array() );
+        endif;
+
+        // получаем отзывы, соотв. этому юзеру, и проверяем
+        if( !$feedbacks = FeedbackModel::where( 'userWhom', '=', $id )->get()
+            OR !$feedbacks = $feedbacks->toArray()
+            OR !is_array( $feedbacks )
+            OR empty( $feedbacks )
+            ):
+            $this->log( 'getFeedbacksForUser: Не получены отзывы юзера с id ' . $id );
+            return json_encode( array() );
+        endif;
+
+        return json_encode( $feedbacks );
     }
 
     private function log( $msg )
