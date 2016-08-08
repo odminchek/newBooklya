@@ -11,3 +11,10 @@ Route::get( '/api/categories/all', 'ApiController@categoriesGetAll' );
 Route::get( '/api/categories/webinars', 'ApiController@webinarsFromCategory' );  // ?alias=somethink
 // Route::get( '/api/webinar/one', 'ApiController@oneWebinarWithCatAndSub' );  // ?alias=somethink
 Route::get( '/api/categories/experts', 'ApiController@getExperts' );  // ?alias=somethink
+// Route::get( '/api/expert/one', 'ApiController@getOneExpert' );  // ?id=mongo_id
+
+
+
+
+
+Route::get( '/api/article/category', 'ApiController@getArticlesFromCategory' );  // ?alias=somethink

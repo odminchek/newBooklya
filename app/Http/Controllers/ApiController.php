@@ -16,6 +16,8 @@ use App\WebinarModel;
 
 use App\UserModel;
 
+use App\ArticleModel;
+
 class ApiController extends Controller
 {
     public function categoriesGetAll()
@@ -115,48 +117,40 @@ class ApiController extends Controller
     	return json_encode( $subjectCategory );
     }
 
-    // public function oneWebinarWithCatAndSub( Request $request )
-    // {
-    // 	try
-    // 	{
-    // 		// проверяем передан ли alias и корректно ли передан
-	   //  	if( !$alias = strip_tags( stripslashes( trim( $request->input( 'alias' ) ) ) )  
-	   //  		OR !is_string( $alias ) 
-	   //  		OR empty( $alias ) 
-	   //  		):
-	   //  		// пишем лог
-	   //  		Log::error( 'oneWebinarWithCatAndSub: Некорректный alias!' );
-	   //  		// возвращаем пустой массив
-	   //  		return json_encode( array() );
-	   //  	endif;
+  //   public function oneWebinarWithCatAndSub( Request $request )
+  //   {
+		// // проверяем передан ли alias и корректно ли передан
+  //   	if( !$alias = strip_tags( stripslashes( trim( $request->input( 'alias' ) ) ) )  
+  //   		OR !is_string( $alias ) 
+  //   		OR empty( $alias ) 
+  //   		):
+  //   		// пишем лог
+  //   		Log::error( 'oneWebinarWithCatAndSub: Некорректный alias!' );
+  //   		// возвращаем пустой массив
+  //   		return json_encode( array() );
+  //   	endif;
 
-	   //  	$alias = '/' . $alias;
+  //   	$alias = '/' . $alias;
 
-	   //  	// эта херня работает (через точку элемент вложенного массива)
-	   //  	$webinar = WebinarModel::where( 'seo.alias', '=', $alias )->get()->toArray();
+  //   	// эта херня работает (через точку элемент вложенного массива)
+  //   	$webinar = WebinarModel::where( 'seo.alias', '=', $alias )->get()->toArray();
 
-	   //  	// $webinar = $webinar[ 0 ];
+  //   	// $webinar = $webinar[ 0 ];
 
-	    	
+    	
 
-	   //  	$subjectId = $webinar[ 0 ][ 'subject' ];
+  //   	$subjectId = $webinar[ 0 ][ 'subject' ];
 
-	   //  	var_dump( $subjectId );
+  //   	var_dump( $subjectId );
 
-	   //  	// $subject = SubjectModel::where( '_id', '=', $subjectId )->get()/*->toArray()*/;
-	   //  	$subject = SubjectModel::find( $subjectId )/*->get()->toArray()*/;
+  //   	// $subject = SubjectModel::where( '_id', '=', $subjectId )->get()/*->toArray()*/;
+  //   	$subject = SubjectModel::find( $subjectId )/*->get()->toArray()*/;
 
-	   //  	echo '<pre>';
-	   //  	var_dump( $subject );
-	   //  	echo '</pre>';
+  //   	echo '<pre>';
+  //   	var_dump( $subject );
+  //   	echo '</pre>';
 
-	    	
-    // 	}
-    // 	catch( Exception $e )
-	   //  {
-	   //  	Log::critical( 'oneWebinarWithCatAndSub: Exception: ' . $e->getMessage() );
-	   //  }
-    // }
+  //   }
 
     public function getExperts( Request $request )
     {
@@ -208,5 +202,75 @@ class ApiController extends Controller
 
     	// преобразуем в JSON и возвращаем
     	return json_encode( $subjectCategory );
+    }
+
+    public function getOneExpert( Request $request )
+    {
+    	// проверяем передан ли id и корректно ли передан
+    	// if( !$id = strip_tags( stripslashes( trim( $request->input( 'id' ) ) ) )  
+    	// 	OR !is_string( $id ) 
+    	// 	OR empty( $id )
+    	// 	OR mb_strlen( $id ) != 24
+    	// 	):
+    	// 	// пишем лог
+    	// 	Log::error( 'getOneExpert: Некорректный id эксперта!' );
+    	// 	// возвращаем пустой массив
+    	// 	return json_encode( array() );
+    	// endif;
+
+    	// echo '<pre>';
+    	// var_dump( UserModel::where( '_id', '55d08122bfef31f6098bb2f1' )->get()->toArray() );
+    	// // var_dump( UserModel::find( '55d08122bfef31f6098bb2f1' ) );
+    	// // var_dump( UserModel::all() );
+    	// echo '</pre>';
+    }
+
+    public function getArticlesFromCategory( Request $request )
+    {
+        // проверяем передан ли alias и корректно ли передан
+        if( !$alias = strip_tags( stripslashes( trim( $request->input( 'alias' ) ) ) )  
+            OR !is_string( $alias ) 
+            OR empty( $alias ) 
+            ):
+            // пишем лог
+            Log::error( 'getArticlesFromCategory: Некорректный alias!' );
+            // возвращаем пустой массив
+            return json_encode( array() );
+        endif;
+
+        // получаем категорию по алиасу и проверяем корректность получения
+        if( !$subjectCategory = SubjectCategoryModel::where( 'alias', '=', $alias )->get()
+            OR !$subjectCategory = $subjectCategory->toArray() 
+            OR !is_array( $subjectCategory )
+            OR empty( $subjectCategory )
+            OR !isset( $subjectCategory[ 0 ] )
+            OR !$subjectCategory = $subjectCategory[ 0 ]
+            OR !is_array( $subjectCategory )
+            OR empty( $subjectCategory )
+            OR !isset( $subjectCategory[ "_id" ] )
+            OR !$subjectCategoryId = $subjectCategory[ "_id" ]
+            OR !is_string( $subjectCategoryId )
+            OR empty( $subjectCategoryId )
+            ):
+            // пишем лог
+            Log::error( 'getArticlesFromCategory: Не получена subjectCategory!' );
+            // возвращаем пустой массив
+            return json_encode( array() );
+        endif;
+
+        // получаем статьи, относящиеся к данной категории и првоеряем корректность полученных данных
+        if( !$articles = ArticleModel::where( 'subjectCategory', '=', $subjectCategoryId )->get()
+            OR !$articles = $articles->toArray()
+            OR !is_array( $articles )
+            OR empty( $articles )
+            ):
+            // пишем лог
+            Log::error( 'getArticlesFromCategory: Не список статей для категории с алиасом ' . $alias . '!' );
+            // возвращаем пустой массив
+            return json_encode( array() );
+        endif;
+
+        // если всё ОК
+        return json_encode( $articles );
     }
 }
