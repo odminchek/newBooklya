@@ -11,6 +11,7 @@ Route::get( '/api/categories/all', 'ApiController@categoriesGetAll' );
 Route::get( '/api/categories/webinars', 'ApiController@webinarsFromCategory' );  // ?alias=somethink
 Route::get( '/api/webinar/one', 'ApiController@webinarWithSubjAndSubjCat' );  // ?alias=somethink
 Route::get( '/api/categories/experts', 'ApiController@getExperts' );  // ?alias=somethink
+Route::get( '/api/profile/one', 'ApiController@getOneProfile' );  // ?id=mongo_id
 Route::get( '/api/article/profile', 'ApiController@getArticlesByUser' );  // ?id=mongo_id
 Route::get( '/api/feedbacks/profile', 'ApiController@getFeedbacksForUser' );  // ?id=mongo_id
 Route::get( '/api/article/category', 'ApiController@getArticlesFromCategory' );  // ?alias=somethink

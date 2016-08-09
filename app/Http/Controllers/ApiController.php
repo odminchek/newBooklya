@@ -289,6 +289,62 @@ class ApiController extends Controller
     	return json_encode( $subjectCategory );
     }
 
+    public function getOneProfile( Request $request )
+    {
+        // проверяем передан ли id и корректно ли передан
+        if( !$id = strip_tags( stripslashes( trim( $request->input( 'id' ) ) ) )  
+            OR !is_string( $id ) 
+            OR empty( $id ) 
+            OR !ctype_xdigit( $id )
+            ):
+            // пишем лог
+            $this->log( 'getOneProfile: Некорректный id! [' . $id . ']' );
+            // возвращаем пустой массив
+            return json_encode( array() );
+        endif;
+
+        // получаем юзеров
+        if( !$users = UserModel::all()
+            OR !$users = $users->toArray()
+            OR !is_array( $users )
+            OR empty( $users )
+            ):
+            // пишем лог
+            $this->log( 'getOneProfile: Не получен список пользователей!' );
+            // возвращаем пустой массив
+            return json_encode( array() );
+        endif;
+
+        // ищем нужного
+        foreach( $users as $user ):
+            if( isset( $user[ '_id' ] )
+                AND $user[ '_id' ] === $id
+                ):
+                $currentUser = $user;
+                break;
+            endif;
+        endforeach;
+
+        // clean
+        if( isset( $users ) ):
+            unset( $users );
+        endif;
+
+        // проверяем
+        if( !isset( $currentUser ) 
+            OR !is_array( $currentUser )
+            OR empty( $currentUser )
+            ):
+            // пишем лог
+            $this->log( 'getOneProfile: Не найден пользователь с _id=' . $id . '!' );
+            // возвращаем пустой массив
+            return json_encode( array() );
+        endif;
+
+        // если всё ОК
+        return json_encode( $currentUser );
+    }
+
     public function getArticlesFromCategory( Request $request )
     {
         // проверяем передан ли alias и корректно ли передан
