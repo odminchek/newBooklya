@@ -565,11 +565,6 @@ class ApiController extends Controller
         // если всё ОК
         $category[ 'subjects' ] = $matchSubjects;
 
-        echo '<pre>';
-        var_dump( $category );
-        echo '</pre>';
-        return;
-
         return json_encode( $category );
     }
 
