@@ -481,53 +481,53 @@ class ApiController extends Controller
         return json_encode( $feedbacks );
     }
 
-    // public function userSignIn( Request $request )
-    // {
-    //     // получаем логин и пароль из запроса
-    //     if( !$username = strip_tags( stripslashes( trim( $request->input( 'username' ) ) ) )
-    //         OR !$password = strip_tags( stripslashes( trim( $request->input( 'password' ) ) ) )
-    //         OR !is_string( $username )
-    //         OR !is_string( $password )
-    //         OR !mb_strlen( $username )
-    //         OR !mb_strlen( $password )
-    //         ):
-    //         $this->log( 'userSignIn: Учётные данные некорректны!' );
-    //         return json_encode( array() );
-    //     endif;
+    public function userSignIn( Request $request )
+    {
+        // получаем логин и пароль из запроса
+        if( !$username = strip_tags( stripslashes( trim( $request->input( 'username' ) ) ) )
+            OR !$password = strip_tags( stripslashes( trim( $request->input( 'password' ) ) ) )
+            OR !is_string( $username )
+            OR !is_string( $password )
+            OR !mb_strlen( $username )
+            OR !mb_strlen( $password )
+            ):
+            $this->log( 'userSignIn: Учётные данные некорректны!' );
+            return json_encode( array() );
+        endif;
 
-    //     // пытаемся найти такого юзера
-    //     if( !$user = UserModel::where( 'phoneNumber', '=', $username )->orWhere( 'primaryEmail', '=', $username )->get()
-    //         OR !$user = $user->toArray()
-    //         OR !is_array( $user )
-    //         OR !isset( $user[ 0 ] )
-    //         OR !$user = $user[ 0 ]
-    //         OR !is_array( $user )
-    //         ):
-    //         $this->log( 'userSignIn: Не найден пользователь с username = ' . $username . '!' );
-    //         return json_encode( array() );
-    //     endif; 
+        // пытаемся найти такого юзера
+        if( !$user = UserModel::where( 'phoneNumber', '=', $username )->orWhere( 'primaryEmail', '=', $username )->get()
+            OR !$user = $user->toArray()
+            OR !is_array( $user )
+            OR !isset( $user[ 0 ] )
+            OR !$user = $user[ 0 ]
+            OR !is_array( $user )
+            ):
+            $this->log( 'userSignIn: Не найден пользователь с username = ' . $username . '!' );
+            return json_encode( array() );
+        endif; 
 
-    //     // проверяем пароль
-    //     if( !isset( $user[ 'password' ] ) 
-    //         OR !is_string( $user[ 'password' ] )
-    //         OR !mb_strlen( $user[ 'password' ] )
-    //         OR $user[ 'password' ] !== md5( $password )
-    //         ):
-    //         $this->log( 'userSignIn: Неверный пароль для пользователя с username = ' . $username . '!' );
-    //         return json_encode( array() );
-    //     endif;
+        // проверяем пароль
+        if( !isset( $user[ 'password' ] ) 
+            OR !is_string( $user[ 'password' ] )
+            OR !mb_strlen( $user[ 'password' ] )
+            OR $user[ 'password' ] !== md5( $password )
+            ):
+            $this->log( 'userSignIn: Неверный пароль для пользователя с username = ' . $username . '!' );
+            return json_encode( array() );
+        endif;
 
-    //     // всё ОК, юзер есть, пароль подходит
-    //     // echo 'Success!';
-    //     echo '<pre>';
-    //     var_dump( $request->session()->all() );
-    //     echo '</pre>';
-    //     // echo '<pre>';
-    //     // var_dump( $request->input( 'username' ) );
-    //     // var_dump( $request->input( 'password' ) );
-    //     // echo '</pre>';
-    //     return;
-    // }
+        // всё ОК, юзер есть, пароль подходит
+        // echo 'Success!';
+        echo '<pre>';
+        var_dump( $request->session()->all() );
+        echo '</pre>';
+        // echo '<pre>';
+        // var_dump( $request->input( 'username' ) );
+        // var_dump( $request->input( 'password' ) );
+        // echo '</pre>';
+        return;
+    }
 
     public function getSubjectsForCategory( Request $request )
     {
