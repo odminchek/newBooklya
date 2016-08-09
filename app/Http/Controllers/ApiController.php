@@ -15,6 +15,7 @@ use App\FeedbackModel;
 class ApiController extends Controller
 {
     private $myLogging = TRUE;
+    private $logFile = '/var/www/booklya/booklya.log';
 
     public function categoriesGetAll()
     {
@@ -111,6 +112,129 @@ class ApiController extends Controller
 
     	// возвращаем
     	return json_encode( $subjectCategory );
+    }
+
+    public function webinarWithSubjAndSubjCat( Request $request )
+    {
+        // проверяем передан ли alias и корректно ли передан
+        if( !$alias = strip_tags( stripslashes( trim( $request->input( 'alias' ) ) ) )  
+            OR !is_string( $alias ) 
+            OR empty( $alias ) 
+            ):
+            // пишем лог
+            $this->log( 'webinarWithSubjAndSubjCat: Некорректный alias!' );
+            // возвращаем пустой массив
+            return json_encode( array() );
+        endif;
+
+        // получаем вебинар и проверяем
+        if( !$webinar = WebinarModel::where( 'seo.alias', '=', '/' . $alias )->get()
+            OR !$webinar = $webinar->toArray()
+            OR !isset( $webinar[ 0 ] )
+            OR !is_array( $webinar[ 0 ] )
+            OR empty( $webinar[ 0 ] )
+            OR !$webinar = $webinar[ 0 ]
+            OR !isset( $webinar[ 'subject' ] )
+            OR empty( $webinar[ 'subject' ] )
+            OR !ctype_xdigit( $webinar[ 'subject' ] )
+            ):
+            // пишем лог
+            $this->log( 'webinarWithSubjAndSubjCat: Не получен вебинар с алиасом ' . $alias . '!' );
+            // возвращаем пустой массив
+            return json_encode( array() );
+        endif;
+
+        // получаем subject
+        // из-за косяков с работой find() пока сделаем через задницу - получим все subject и выберем нужный в коде
+        if( !$subjects = SubjectModel::all()
+            OR !$subjects = $subjects->toArray()
+            OR !is_array( $subjects )
+            OR empty( $subjects )
+            ):
+            // пишем лог
+            $this->log( 'webinarWithSubjAndSubjCat: Не получен список subjects!' );
+            // возвращаем пустой массив
+            return json_encode( array() );
+        endif;
+
+        // выбираем тему с нужным нам _id
+        foreach( $subjects as $subject ):
+            if( isset( $subject[ '_id' ] ) 
+                AND $subject[ '_id' ] === $webinar[ 'subject' ]
+                ):
+                // переносим тему в вебинар
+                $webinar[ 'subject-body' ] = $subject;
+                break;
+            endif;
+        endforeach;
+
+        // больше не нужна
+        if( isset( $subjects ) ):
+            unset( $subjects );
+        endif;
+
+        // проверяем subject
+        if( !isset( $webinar[ 'subject-body' ] )
+            OR !is_array( $webinar[ 'subject-body' ] )
+            OR empty( $webinar[ 'subject-body' ] )
+            OR !isset( $webinar[ 'subject-body' ][ 'subjectCategory' ] )
+            OR !is_string( $webinar[ 'subject-body' ][ 'subjectCategory' ] )
+            OR empty( $webinar[ 'subject-body' ][ 'subjectCategory' ] )
+            OR !ctype_xdigit( $webinar[ 'subject-body' ][ 'subjectCategory' ] )
+            ):
+            // пишем лог
+            $this->log( 'webinarWithSubjAndSubjCat: Не найдена категория для вебинара с алиасом ' . $alias . '!' );
+            // возвращаем пустой массив
+            return json_encode( array() );
+        endif;
+
+        // получаем subjectCategory и проверяем
+        if( !$subjectCategories = SubjectCategoryModel::all()
+            OR !$subjectCategories = $subjectCategories->toArray()
+            OR !is_array( $subjectCategories )
+            OR empty( $subjectCategories )
+            ):
+            // пишем лог
+            $this->log( 'webinarWithSubjAndSubjCat: Не получен список subjectCategory!' );
+            // возвращаем пустой массив
+            return json_encode( array() );
+        endif;
+
+        // выбираем subjectCategory с нужным _id
+        foreach( $subjectCategories as $subjectCategory ):
+            if( isset( $subjectCategory[ '_id' ] )
+                AND $subjectCategory[ '_id' ] === $webinar[ 'subject-body' ][ 'subjectCategory' ]
+                ):
+                // переносим subjectCategory в вебинар
+                $webinar[ 'subjectCategory-body' ] = $subjectCategory;
+                break;
+            endif;
+        endforeach;
+
+        // больше не нужна
+        if( isset( $subjectCategories ) ):
+            unset( $subjectCategories );
+        endif;
+
+        // проверяем корректность subjectCategory
+        if( !isset( $webinar[ 'subjectCategory-body' ] )
+            OR !is_array( $webinar[ 'subjectCategory-body' ] )
+            OR empty( $webinar[ 'subjectCategory-body' ] )
+            ):
+            // пишем лог
+            $this->log( 'webinarWithSubjAndSubjCat: Не получена subjectCategory для вебинара с алисаом ' . $alias . '!' );
+            // возвращаем пустой массив
+            return json_encode( array() );
+        endif;
+
+        // $subjectCategory
+
+        // echo '<pre>';
+        // var_dump( $webinar );
+        // echo '</pre>';
+        // return;
+
+        return json_encode( $webinar );
     }
 
     public function getExperts( Request $request )
@@ -301,13 +425,61 @@ class ApiController extends Controller
         return json_encode( $feedbacks );
     }
 
+    // public function userSignIn( Request $request )
+    // {
+    //     // получаем логин и пароль из запроса
+    //     if( !$username = strip_tags( stripslashes( trim( $request->input( 'username' ) ) ) )
+    //         OR !$password = strip_tags( stripslashes( trim( $request->input( 'password' ) ) ) )
+    //         OR !is_string( $username )
+    //         OR !is_string( $password )
+    //         OR !mb_strlen( $username )
+    //         OR !mb_strlen( $password )
+    //         ):
+    //         $this->log( 'userSignIn: Учётные данные некорректны!' );
+    //         return json_encode( array() );
+    //     endif;
+
+    //     // пытаемся найти такого юзера
+    //     if( !$user = UserModel::where( 'phoneNumber', '=', $username )->orWhere( 'primaryEmail', '=', $username )->get()
+    //         OR !$user = $user->toArray()
+    //         OR !is_array( $user )
+    //         OR !isset( $user[ 0 ] )
+    //         OR !$user = $user[ 0 ]
+    //         OR !is_array( $user )
+    //         ):
+    //         $this->log( 'userSignIn: Не найден пользователь с username = ' . $username . '!' );
+    //         return json_encode( array() );
+    //     endif; 
+
+    //     // проверяем пароль
+    //     if( !isset( $user[ 'password' ] ) 
+    //         OR !is_string( $user[ 'password' ] )
+    //         OR !mb_strlen( $user[ 'password' ] )
+    //         OR $user[ 'password' ] !== md5( $password )
+    //         ):
+    //         $this->log( 'userSignIn: Неверный пароль для пользователя с username = ' . $username . '!' );
+    //         return json_encode( array() );
+    //     endif;
+
+    //     // всё ОК, юзер есть, пароль подходит
+    //     // echo 'Success!';
+    //     echo '<pre>';
+    //     var_dump( $request->session()->all() );
+    //     echo '</pre>';
+    //     // echo '<pre>';
+    //     // var_dump( $request->input( 'username' ) );
+    //     // var_dump( $request->input( 'password' ) );
+    //     // echo '</pre>';
+    //     return;
+    // }
+
     private function log( $msg )
     {
         
         if( $this->myLogging ):
             date_default_timezone_set( 'Europe/Samara' );
             $timestamp = date( "Y.m.d H:i:s" ); 
-            file_put_contents( '/tmp/lara.log', $timestamp . ' ' . $msg . "\n", FILE_APPEND );
+            file_put_contents( $this->logFile, $timestamp . ' ' . $msg . "\n", FILE_APPEND );
         else:
             Log::error( $msg );
         endif;
