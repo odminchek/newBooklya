@@ -27,3 +27,6 @@ Route::get( '/api/article/one', 'ApiController@getArticleByAlias' );  // ?alias=
 // {
 //     Route::post( '/api/auth/signin', 'ApiController@userSignIn' );
 // } );
+
+
+Route::get( '/api/categories/subjects', 'ApiController@getSubjectsForCategory' );  // ?id=mongo_id

@@ -473,6 +473,106 @@ class ApiController extends Controller
     //     return;
     // }
 
+    public function getSubjectsForCategory( Request $request )
+    {
+        // проверяем передан ли id и корректно ли передан
+        if( !$id = strip_tags( stripslashes( trim( $request->input( 'id' ) ) ) )  
+            OR !is_string( $id ) 
+            OR empty( $id ) 
+            OR !ctype_xdigit( $id )
+            ):
+            // пишем лог
+            $this->log( 'getSubjectsForCategory: Некорректный id!' );
+            // возвращаем пустой массив
+            return json_encode( array() );
+        endif;
+
+        // получаем категории
+        if( !$subjectCategories = SubjectCategoryModel::all()
+            OR !$subjectCategories = $subjectCategories->toArray()
+            OR !is_array( $subjectCategories )
+            OR empty( $subjectCategories )
+            ):
+            // пишем лог
+            $this->log( 'getSubjectsForCategory: Не получены subjectCategory!' );
+            // возвращаем пустой массив
+            return json_encode( array() );
+        endif;
+
+        // перебираем категории, ищем нужную
+        foreach( $subjectCategories as $subjectCategory ):
+            if( isset( $subjectCategory[ '_id' ] ) 
+                AND $subjectCategory[ '_id' ] === $id
+                ):
+                $category = $subjectCategory;
+                break;
+            endif;
+        endforeach;
+
+        // больше не нужна
+        if( isset( $subjectCategories ) ):
+            unset( $subjectCategories );
+        endif;
+
+        // проверяем subjectCategory
+        if( !isset( $category )
+            OR !is_array( $category )
+            OR empty( $category )
+            ):
+            // пишем лог
+            $this->log( 'getSubjectsForCategory: Не получена subjectCategory с _id=' . $id . '!' );
+            // возвращаем пустой массив
+            return json_encode( array() );
+        endif;
+
+        // получаем темы
+        if( !$subjects = SubjectModel::all()
+            OR !$subjects = $subjects->toArray()
+            OR !is_array( $subjects )
+            OR empty( $subjects )
+            ):
+            // пишем лог
+            $this->log( 'getSubjectsForCategory: Не получены subjects!' );
+            // возвращаем пустой массив
+            return json_encode( array() );
+        endif;
+
+        // ищем темы, которые входят в указанную категорию
+        foreach( $subjects as $subject ):
+            if( isset( $subject[ 'subjectCategory' ] )
+                AND $subject[ 'subjectCategory' ] === $category[ '_id' ]
+                ):
+                $matchSubjects[] = $subject;
+            endif;
+        endforeach;
+
+        // больше не нужна
+        if( isset( $subjects ) ):
+            unset( $subjects );
+        endif;
+
+        // проверяем темы
+        if( !isset( $matchSubjects )
+            OR !is_array( $matchSubjects )
+            OR empty( $matchSubjects )
+            ):
+            // пишем лог
+            $this->log( 'getSubjectsForCategory: Не найдены subjects для subjectCategory с _id=' . $id . '!' );
+            // возвращаем пустой массив
+            return json_encode( array() );
+        endif;
+
+        // если всё ОК
+        $category[ 'subjects' ] = $matchSubjects;
+
+        echo '<pre>';
+        var_dump( $category );
+        echo '</pre>';
+        return;
+
+        return json_encode( $category );
+    }
+
     private function log( $msg )
     {
         
