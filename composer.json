@@ -24,6 +24,7 @@
             "database"
         ],
         "psr-4": {
+            "odminchek\\mongoauth\\": "packages/odminchek/mongoauth/src",
             "App\\": "app/"
         }
     },
