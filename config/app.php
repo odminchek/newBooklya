@@ -42,6 +42,9 @@ return [
 
         // mongo
         Jenssegers\Mongodb\MongodbServiceProvider::class,
+
+        // CORS
+        Barryvdh\Cors\ServiceProvider::class,
     ],
 
     'aliases' => [
