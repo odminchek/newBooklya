@@ -40,8 +40,6 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
-        odminchek\mongoauth\mongoauthServiceProvider::class,
-
         // mongo
         Jenssegers\Mongodb\MongodbServiceProvider::class,
 

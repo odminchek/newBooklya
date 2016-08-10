@@ -227,13 +227,7 @@ class ApiController extends Controller
             return json_encode( array() );
         endif;
 
-        // $subjectCategory
-
-        // echo '<pre>';
-        // var_dump( $webinar );
-        // echo '</pre>';
-        // return;
-
+        // если всё ОК
         return json_encode( $webinar );
     }
 
@@ -502,6 +496,7 @@ class ApiController extends Controller
             OR !isset( $user[ 0 ] )
             OR !$user = $user[ 0 ]
             OR !is_array( $user )
+            OR !isset( $user[ '_id' ] )
             ):
             $this->log( 'userSignIn: Не найден пользователь с username = ' . $username . '!' );
             return json_encode( array() );
@@ -517,11 +512,30 @@ class ApiController extends Controller
             return json_encode( array() );
         endif;
 
+        // токен для аутентификации
+        $api_auth_token = hash( 'sha256', time() );
+
+        // теперь этот токен надо прописать юзеру
+
+        // вот на этом этапе юзер у нас аутентифицирован
+
+        // $request->session()->put( 'user_id', $user[ '_id' ] );
+        // $request->session()->put( 'hash_key', hash( 'sha256', time() ) );
+
         // всё ОК, юзер есть, пароль подходит
         // echo 'Success!';
-        echo '<pre>';
-        var_dump( $request->session()->all() );
-        echo '</pre>';
+        // $request->session()->regenerate();
+        // echo '<pre>';
+        // print_r( $request->session()->all() );
+
+        // echo '</pre>';
+
+        // return;
+        // Если всё ОК, кидаем в сессию id польователя, session_id и hash_key
+        // $user_id = $user[ '_id' ];
+
+        // нам надо обновить 
+
         // echo '<pre>';
         // var_dump( $request->input( 'username' ) );
         // var_dump( $request->input( 'password' ) );
