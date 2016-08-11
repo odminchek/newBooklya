@@ -139,9 +139,7 @@ class ApiController extends Controller
             OR !is_array( $webinar )
             OR empty( $webinar )
             OR !isset( $webinar[ 'subject' ] )
-            OR !is_string( $webinar[ 'subject' ] )
-            OR !mb_strlen( $webinar[ 'subject' ] )
-            OR !ctype_xdigit( $webinar[ 'subject' ] )
+            OR !$this->isMongoId( $webinar[ 'subject' ] )
             OR !$webinar = $this->changeId( $webinar )
             ):
             // пишем лог
@@ -156,9 +154,7 @@ class ApiController extends Controller
             OR !is_array( $subject )
             OR empty( $subject )
             OR !isset( $subject[ 'subjectCategory' ] )
-            OR !is_string( $subject[ 'subjectCategory' ] )
-            OR !mb_strlen( $subject[ 'subjectCategory' ] )
-            OR !ctype_xdigit( $subject[ 'subjectCategory' ] )
+            OR !$this->isMongoId( $subject[ 'subjectCategory' ] )
             OR !$subject = $this->changeId( $subject )
             ):
             // пишем лог
