@@ -390,19 +390,18 @@ class ApiController extends Controller
         return json_encode( $feedbacks );
     }
 
-/**
-    тут нам должен приходить JSON
-    body={}
-**/
     public function userSignIn( Request $request )
     {
-        // получаем логин и пароль из запроса
-        if( !$username = strip_tags( stripslashes( trim( $request->input( 'username' ) ) ) )
-            OR !$password = strip_tags( stripslashes( trim( $request->input( 'password' ) ) ) )
-            OR !is_string( $username )
-            OR !is_string( $password )
-            OR !mb_strlen( $username )
-            OR !mb_strlen( $password )
+        // смотрим что нам
+        if( !$request->has( 'body' )
+            OR !$body = $request->input( 'body' )
+            OR !$body = json_decode( $body, TRUE )
+            OR !isset( $body[ 'username' ] )
+            OR !is_string( $body[ 'username' ] )
+            OR empty( $body[ 'username' ] )
+            OR !isset( $body[ 'password' ] )
+            OR !is_string( $body[ 'password' ] )
+            OR empty( $body[ 'password' ] )
             ):
             $this->log( 'userSignIn: Учётные данные некорректны!' );
             $response[ 'status' ] = 'error';
@@ -410,13 +409,13 @@ class ApiController extends Controller
         endif;
 
         // пытаемся найти такого юзера
-        if( !$userModel = UserModel::where( 'phoneNumber', '=', $username )->orWhere( 'primaryEmail', '=', $username )->first()
+        if( !$userModel = UserModel::where( 'phoneNumber', '=', $body[ 'username' ] )->orWhere( 'primaryEmail', '=', $body[ 'username' ] )->first()
             OR !$user = $userModel->toArray()
             OR !is_array( $user )
             OR empty( $user )
             OR !isset( $user[ '_id' ] )
             ):
-            $this->log( 'userSignIn: Не найден пользователь с username = ' . $username . '!' );
+            $this->log( 'userSignIn: Не найден пользователь с username = ' . $body[ 'username' ] . '!' );
             $response[ 'status' ] = 'error';
             return json_encode( $response );
         endif;
@@ -425,9 +424,9 @@ class ApiController extends Controller
         if( !isset( $user[ 'password' ] ) 
             OR !is_string( $user[ 'password' ] )
             OR !mb_strlen( $user[ 'password' ] )
-            OR $user[ 'password' ] !== md5( $password )
+            OR $user[ 'password' ] !== md5( $body[ 'password' ] )
             ):
-            $this->log( 'userSignIn: Неверный пароль для пользователя с username = ' . $username . '!' );
+            $this->log( 'userSignIn: Неверный пароль для пользователя с username = ' . $body[ 'username' ] . '!' );
             $response[ 'status' ] = 'error';
             return json_encode( $response );
         endif;
