@@ -449,6 +449,7 @@ class ApiController extends Controller
         else:
             // если нет, авторизуем
             $userAuthModel = new UserAuthModel;
+            $userAuthModel->userId = $user[ '_id' ];
             $userAuthModel->authKey = $userAuthKey;
             // сохраняем в базу
             if( !$userAuthModel->save() ):
