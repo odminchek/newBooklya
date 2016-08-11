@@ -11,6 +11,7 @@ use App\WebinarModel;
 use App\UserModel;
 use App\ArticleModel;
 use App\FeedbackModel;
+use App\UserAuthModel;
 
 class ApiController extends Controller
 {
@@ -400,21 +401,21 @@ class ApiController extends Controller
             OR !mb_strlen( $password )
             ):
             $this->log( 'userSignIn: Учётные данные некорректны!' );
-            return json_encode( array() );
+            $response[ 'status' ] = 'error';
+            return json_encode( $response );
         endif;
 
         // пытаемся найти такого юзера
-        if( !$user = UserModel::where( 'phoneNumber', '=', $username )->orWhere( 'primaryEmail', '=', $username )->get()
-            OR !$user = $user->toArray()
+        if( !$userModel = UserModel::where( 'phoneNumber', '=', $username )->orWhere( 'primaryEmail', '=', $username )->first()
+            OR !$user = $userModel->toArray()
             OR !is_array( $user )
-            OR !isset( $user[ 0 ] )
-            OR !$user = $user[ 0 ]
-            OR !is_array( $user )
+            OR empty( $user )
             OR !isset( $user[ '_id' ] )
             ):
             $this->log( 'userSignIn: Не найден пользователь с username = ' . $username . '!' );
-            return json_encode( array() );
-        endif; 
+            $response[ 'status' ] = 'error';
+            return json_encode( $response );
+        endif;
 
         // проверяем пароль
         if( !isset( $user[ 'password' ] ) 
@@ -423,54 +424,47 @@ class ApiController extends Controller
             OR $user[ 'password' ] !== md5( $password )
             ):
             $this->log( 'userSignIn: Неверный пароль для пользователя с username = ' . $username . '!' );
-            return json_encode( array() );
+            $response[ 'status' ] = 'error';
+            return json_encode( $response );
         endif;
 
-        // echo '<pre>';
-        // print_r( UserModel::find( '552fa4dbbfef31c57e8b6539' )->toArray() );
-        // echo '</pre>';
+        // кладём в ответ id юзера
+        $response[ 'user_id' ] = $user[ '_id' ];
+        // генерим проверочный ключ
+        $userAuthKey = hash( 'sha256', time() );
         
-        // ищем user_id - почту или телефон
-        // if( isset( $user[ '' ] )
-        //     ):
+        // если у нас юзер с таким _id уже был авторизован
+        if( $userAuthModel = $this->isUserAuth( $user[ '_id' ] ) ):
+            // меняем ему $userAuthKey
+            $userAuthModel->authKey = $userAuthKey;
+            // сохраняем в базу
+            if( !$userAuthModel->save() ):
+                // пишем лог
+                $this->log( 'userSignIn: ошибка сохранения auth_key для юзера с id=' . $user[ '_id' ] );
+                // статус - ошибка
+                $response[ 'status' ] = 'error';
+                // возвращаем ответ
+                return json_encode( $response );
+            endif;
+        else:
+            // если нет, авторизуем
+            $userAuthModel = new UserAuthModel;
+            $userAuthModel->authKey = $userAuthKey;
+            // сохраняем в базу
+            if( !$userAuthModel->save() ):
+                // пишем лог
+                $this->log( 'userSignIn: ошибка сохранения auth_key для юзера с id=' . $user[ '_id' ] );
+                // статус - ошибка
+                $response[ 'status' ] = 'error';
+                // возвращаем ответ
+                return json_encode( $response );
+            endif;
+        endif;
 
-        // elseif(  ):
+        $response[ 'status' ] = 'success';
+        $response[ 'user_auth_key' ] = $userAuthKey;
 
-        // else:
-
-        // endif;
-
-        // токен для аутентификации
-        // $api_auth_token = hash( 'sha256', time() );
-
-        // echo Session::getId();
-
-        // теперь этот токен надо прописать юзеру
-
-        // вот на этом этапе юзер у нас аутентифицирован
-
-        // $request->session()->put( 'user_id', $user[ '_id' ] );
-        // $request->session()->put( 'hash_key', hash( 'sha256', time() ) );
-
-        // всё ОК, юзер есть, пароль подходит
-        // echo 'Success!';
-        // $request->session()->regenerate();
-        // echo '<pre>';
-        // print_r( $request->session()->all() );
-
-        // echo '</pre>';
-
-        // return;
-        // Если всё ОК, кидаем в сессию id польователя, session_id и hash_key
-        // $user_id = $user[ '_id' ];
-
-        // нам надо обновить 
-
-        // echo '<pre>';
-        // var_dump( $request->input( 'username' ) );
-        // var_dump( $request->input( 'password' ) );
-        // echo '</pre>';
-        return;
+        return $response;
     }
 
     public function getSubjectsForCategory( Request $request )
@@ -562,5 +556,16 @@ class ApiController extends Controller
         endif;
 
         return TRUE;
+    }
+
+    private function isUserAuth( $userId )
+    {
+        if( !$this->isMongoId( $userId )
+            OR !$userAuth = UserAuthModel::where( 'userId', '=', $userId )->first()
+            ):
+            return FALSE;
+        endif;
+
+        return $userAuth;
     }
 }
