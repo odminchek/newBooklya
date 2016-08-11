@@ -390,6 +390,10 @@ class ApiController extends Controller
         return json_encode( $feedbacks );
     }
 
+/**
+    тут нам должен приходить JSON
+    body={}
+**/
     public function userSignIn( Request $request )
     {
         // получаем логин и пароль из запроса
@@ -495,6 +499,64 @@ class ApiController extends Controller
 
         // если всё ОК
         return json_encode( $subjects );
+    }
+
+    public function createFeedback( Request $request )
+    {
+        // проверяем что нам пришло
+        if( !$request->has( 'body' ) 
+            OR !$body = $request->input( 'body' )
+            OR !$body = json_decode( $body, TRUE )
+            OR !is_array( $body )
+            OR !isset( $body[ 'user_id' ] )
+            OR !$this->isMongoId( $body[ 'user_id' ] )
+            OR !isset( $body[ 'auth_key' ] )
+            OR !is_string( $body[ 'auth_key' ] )
+            OR mb_strlen( $body[ 'auth_key' ] ) !== 64
+            OR !isset( $body[ 'for_user_id' ] )
+            OR !$this->isMongoId( $body[ 'for_user_id' ] )
+            OR !isset( $body[ 'text' ] )
+            OR !is_string( $body[ 'text' ] )
+            OR empty( $body[ 'text' ] )
+            ):
+            $this->log( 'createFeedback: некорректные параметры запроса!' );
+            $response[ 'status' ] = 'error';
+            return json_encode( $response );
+        endif;
+
+        // проверяем, авторизован ли пользователь
+        if( !$userAuth = $this->isUserAuth( $body[ 'user_id' ] )
+            OR !$userAuth = $userAuth->toArray()
+            OR !isset( $userAuth[ 'authKey' ] )
+            OR $userAuth[ 'authKey' ] !== $body[ 'auth_key' ]
+            ):
+            $this->log( 'createFeedback: Пользователь не аутентифицирован! user=[' . $body[ 'user_id' ] . '] userWhom=[' . $body[ 'for_user_id' ] . '] text=[' . $body[ 'text' ] . ']' );
+            $response[ 'status' ] = 'error';
+            return json_encode( $response );
+        endif;
+
+        // создаём экземпляр класса и заполняем поля
+        $feedbackModel = new FeedbackModel;
+        $feedbackModel->user = $body[ 'user_id' ];
+        $feedbackModel->userWhom = $body[ 'for_user_id' ];
+        $feedbackModel->text = $body[ 'text' ];
+
+        // сохраням в базу
+        if( !$result = $feedbackModel->save() 
+            OR !$insertedId = $feedbackModel->_id
+            OR !$this->isMongoId( $insertedId )
+            ):
+            $this->log( 'createFeedback: не удалось сохранить модель! user=[' . $body[ 'user_id' ] . '] userWhom=[' . $body[ 'for_user_id' ] . '] text=[' . $body[ 'text' ] . ']' );
+            $response[ 'status' ] = 'error';
+            return json_encode( $response );
+        endif;
+
+        // если всё ОК, формируем ответ
+        $response[ 'status' ] = 'success';
+        $response[ 'inserted_id' ] = $insertedId;
+
+        // возвращаем ID добавленного отзыва
+        return json_encode( $response );
     }
 
 
