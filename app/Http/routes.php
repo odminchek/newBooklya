@@ -39,5 +39,10 @@ Route::group( [ 'middleware' => 'cors' ], function()
     Route::post( '/api/messages/create', 'ApiController@createMessage' );
 } );
 
+Route::group( [ 'middleware' => 'cors' ], function()
+{
+    Route::post( '/api/lessons/create', 'ApiController@createLesson' );
+} );
+
 
 Route::get( '/api/categories/subjects', 'ApiController@getSubjectsForCategory' );  // ?id=mongo_id
