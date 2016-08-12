@@ -13,6 +13,7 @@ use App\ArticleModel;
 use App\FeedbackModel;
 use App\UserAuthModel;
 use App\MessageModel;
+use App\LessonModel;
 
 class ApiController extends Controller
 {
@@ -668,13 +669,13 @@ class ApiController extends Controller
             OR mb_strlen( $body[ 'auth_key' ] ) !== 64
 
             OR !isset( $body[ 'start_date' ] )
-            OR !is_int( $body[ 'start_date' ] )
+            OR !is_numeric( $body[ 'start_date' ] )
 
             OR !isset( $body[ 'stop_date' ] )
-            OR !is_int( $body[ 'stop_date' ] )
+            OR !is_numeric( $body[ 'stop_date' ] )
 
             OR !isset( $body[ 'price' ] )
-            OR !is_int( $body[ 'price' ] )
+            OR !is_numeric( $body[ 'price' ] )
 
             OR !isset( $body[ 'subject' ] )
             OR !$this->isMongoId( $body[ 'subject' ] )
@@ -683,10 +684,46 @@ class ApiController extends Controller
             OR !is_string( $body[ 'theme' ] )
             OR empty( $body[ 'theme' ] )
             ):
-            $this->log( 'createMessage: некорректные параметры запроса!' );
+            $this->log( 'createLesson: некорректные параметры запроса!' );
             $response[ 'status' ] = 'error';
             return json_encode( $response );
         endif;
+
+        // проверяем, авторизован ли пользователь
+        if( !$userAuth = $this->isUserAuth( $body[ 'user_id' ] )
+            OR !$userAuth = $userAuth->toArray()
+            OR !isset( $userAuth[ 'authKey' ] )
+            OR $userAuth[ 'authKey' ] !== $body[ 'auth_key' ]
+            ):
+            $this->log( 'createLesson: Пользователь не аутентифицирован!' );
+            $response[ 'status' ] = 'error';
+            return json_encode( $response );
+        endif;
+
+        // создаём экземпляр класса и заполняем поля
+        $lessonModel = new LessonModel;
+        $lessonModel->learner = $body[ 'user_id' ];
+        $lessonModel->startDate = $body[ 'start_date' ];
+        $lessonModel->stopDate = $body[ 'stop_date' ];
+        $lessonModel->price = $body[ 'price' ];
+        $lessonModel->subject = $body[ 'subject' ];
+        $lessonModel->theme = $body[ 'theme' ];
+
+        // сохраняем в базу и проверяем
+        if( !$lessonModel->save()
+            OR !$insertedId = $lessonModel->_id
+            ):
+            $this->log( 'createLesson: урок не добавлен!' );
+            $response[ 'status' ] = 'error';
+            return json_encode( $response );
+        endif;
+
+        // если всё ОК, формируем ответ
+        $response[ 'status' ] = 'success';
+        $response[ 'lesson_id' ] = $insertedId;
+
+        // возвращаем
+        return json_encode( $response );
     }
 
 
