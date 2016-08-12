@@ -653,6 +653,42 @@ class ApiController extends Controller
         return json_encode( $response );
     }
 
+    public function createLesson( Request $request )
+    {
+        // проверяем что нам пришло
+        if( !$request->has( 'body' ) 
+            OR !$body = json_decode( $request->input( 'body' ), TRUE )
+            OR !is_array( $body )
+
+            OR !isset( $body[ 'user_id' ] )
+            OR !$this->isMongoId( $body[ 'user_id' ] )
+
+            OR !isset( $body[ 'auth_key' ] )
+            OR !is_string( $body[ 'auth_key' ] )
+            OR mb_strlen( $body[ 'auth_key' ] ) !== 64
+
+            OR !isset( $body[ 'start_date' ] )
+            OR !is_int( $body[ 'start_date' ] )
+
+            OR !isset( $body[ 'stop_date' ] )
+            OR !is_int( $body[ 'stop_date' ] )
+
+            OR !isset( $body[ 'price' ] )
+            OR !is_int( $body[ 'price' ] )
+
+            OR !isset( $body[ 'subject' ] )
+            OR !$this->isMongoId( $body[ 'subject' ] )
+
+            OR !isset( $body[ 'theme' ] )
+            OR !is_string( $body[ 'theme' ] )
+            OR empty( $body[ 'theme' ] )
+            ):
+            $this->log( 'createMessage: некорректные параметры запроса!' );
+            $response[ 'status' ] = 'error';
+            return json_encode( $response );
+        endif;
+    }
+
 
 
     private function log( $msg )
