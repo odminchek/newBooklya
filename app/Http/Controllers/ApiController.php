@@ -558,6 +558,43 @@ class ApiController extends Controller
         return json_encode( $response );
     }
 
+    public function createMessage( Request $request )
+    {
+        // входные данные:
+        // 
+        // user (от кого) [mongoId]
+        // interlocutor (кому) [mongoId]
+        // text (сообщение) [string]
+        //
+        // incoming (TRUE или FALSE) [bool]
+        // outgoing (TRUE или FALSE) [bool]
+        //
+        // isRead = всегда FALSE [bool]
+
+        // проверяем что нам пришло
+        if( !$request->has( 'body' ) 
+            OR !$body = json_decode( $request->input( 'body' ), TRUE )
+            OR !is_array( $body )
+            OR empty( $body )
+
+            OR !isset( $body[ 'user' ] )
+            OR !$this->isMongoId( $body[ 'user' ] )
+
+            OR !isset( $body[ 'interlocutor' ] )
+            OR !$this->isMongoId( $body[ 'interlocutor' ] )
+
+            OR !isset( $body[ 'text' ] )
+            OR !is_string( $body[ 'text' ] )
+            OR empty( $body[ 'text' ] )
+            ):
+            $this->log( 'createMessage: некорректные параметры запроса!' );
+            $response[ 'status' ] = 'error';
+            return json_encode( $response );
+        endif;
+
+        
+    }
+
 
 
     private function log( $msg )
