@@ -12,6 +12,7 @@ use App\UserModel;
 use App\ArticleModel;
 use App\FeedbackModel;
 use App\UserAuthModel;
+use App\MessageModel;
 
 class ApiController extends Controller
 {
@@ -560,25 +561,17 @@ class ApiController extends Controller
 
     public function createMessage( Request $request )
     {
-        // входные данные:
-        // 
-        // user (от кого) [mongoId]
-        // interlocutor (кому) [mongoId]
-        // text (сообщение) [string]
-        //
-        // incoming (TRUE или FALSE) [bool]
-        // outgoing (TRUE или FALSE) [bool]
-        //
-        // isRead = всегда FALSE [bool]
-
         // проверяем что нам пришло
         if( !$request->has( 'body' ) 
             OR !$body = json_decode( $request->input( 'body' ), TRUE )
             OR !is_array( $body )
-            OR empty( $body )
 
-            OR !isset( $body[ 'user' ] )
-            OR !$this->isMongoId( $body[ 'user' ] )
+            OR !isset( $body[ 'user_id' ] )
+            OR !$this->isMongoId( $body[ 'user_id' ] )
+
+            OR !isset( $body[ 'auth_key' ] )
+            OR !is_string( $body[ 'auth_key' ] )
+            OR mb_strlen( $body[ 'auth_key' ] ) !== 64
 
             OR !isset( $body[ 'interlocutor' ] )
             OR !$this->isMongoId( $body[ 'interlocutor' ] )
@@ -592,7 +585,72 @@ class ApiController extends Controller
             return json_encode( $response );
         endif;
 
+        // проверяем, авторизован ли пользователь
+        if( !$userAuth = $this->isUserAuth( $body[ 'user_id' ] )
+            OR !$userAuth = $userAuth->toArray()
+            OR !isset( $userAuth[ 'authKey' ] )
+            OR $userAuth[ 'authKey' ] !== $body[ 'auth_key' ]
+            ):
+            $this->log( 'createMessage: Пользователь не аутентифицирован!' );
+            $response[ 'status' ] = 'error';
+            return json_encode( $response );
+        endif;
+
+        // создаём экземпляр класса, заполняем поля и сохраняем в базу (первое сообщение, для получателя)
+        $messageModel = new MessageModel;
+        $messageModel->user = $body[ 'user_id' ];
+        $messageModel->interlocutor = $body[ 'interlocutor' ];
+        $messageModel->text = $body[ 'text' ];
+        $messageModel->incoming = TRUE;
+        $messageModel->outgoing = FALSE;
+        $messageModel->isRead = FALSE;
+
+        // сохраняем и проверяем
+        if( !$messageModel->save()
+            OR !$firstInsertedId = $messageModel->_id
+            OR !$this->isMongoId( $firstInsertedId )
+            ):
+            $this->log( 'createMessage: Сообщение для получателя не сохранено!' );
+            $response[ 'status' ] = 'error';
+            return json_encode( $response );
+        endif;
         
+        // создаём экземпляр класса, заполняем поля и сохраняем в базу (второе сообщение, для отправителя)
+        $messageModel = new MessageModel;
+        $messageModel->user = $body[ 'user_id' ];
+        $messageModel->interlocutor = $body[ 'interlocutor' ];
+        $messageModel->text = $body[ 'text' ];
+        $messageModel->incoming = FALSE;
+        $messageModel->outgoing = TRUE;
+        $messageModel->isRead = FALSE;
+
+        // сохраняем в базу и получаем ID добавленной записи
+        if( !$messageModel->save()
+            OR !$insertedId = $messageModel->_id
+            OR !$this->isMongoId( $insertedId )
+            ):
+            $this->log( 'createMessage: Сообщение для отправителя не сохранено!' );
+            // сносим сообщение, которое уже было добавлено
+            if( !$messageModel = MessageModel::find( $firstInsertedId )
+                OR !$messageModel->delete()
+                ):
+                // если не удалось снести, пишем лог
+                $this->log( 'createMessage: Сообщение для получателя не удалено!' );
+            endif;
+            // ошибку в статус и возвращаем
+            $response[ 'status' ] = 'error';
+            return json_encode( $response );
+        endif;
+
+        // получаем _id добавленного сообщения
+        $insertedId = $messageModel->_id;
+
+        // формируем ответ
+        $response[ 'status' ] = 'success';
+        $response[ 'new_message_id' ] = $insertedId;
+
+        // возвращаем
+        return json_encode( $response );
     }
 
 
