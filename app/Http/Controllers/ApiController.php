@@ -726,6 +726,118 @@ class ApiController extends Controller
         return json_encode( $response );
     }
 
+    public function createArticle( Request $request )
+    {
+        // проверяем что нам пришло
+        if( !$request->has( 'body' ) 
+            OR !$body = json_decode( $request->input( 'body' ), TRUE )
+            OR !is_array( $body )
+
+            OR !isset( $body[ 'user_id' ] )
+            OR !$this->isMongoId( $body[ 'user_id' ] )
+
+            OR !isset( $body[ 'auth_key' ] )
+            OR !is_string( $body[ 'auth_key' ] )
+            OR mb_strlen( $body[ 'auth_key' ] ) !== 64
+
+            OR !isset( $body[ 'title' ] )
+            OR !is_string( $body[ 'title' ] )
+            OR empty( $body[ 'title' ] )
+
+            OR !isset( $body[ 'subject' ] )
+            OR !$this->isMongoId( $body[ 'subject' ] )
+
+            OR !isset( $body[ 'subjectCategory' ] )
+            OR !$this->isMongoId( $body[ 'subjectCategory' ] )
+
+            OR !isset( $body[ 'image' ] )
+            OR !$this->isMongoId( $body[ 'image' ] )
+
+            OR !isset( $body[ 'text' ] )
+            OR !is_string( $body[ 'text' ] )
+            OR empty( $body[ 'text' ] )
+
+            OR !isset( $body[ 'alias' ] )
+            OR !is_string( $body[ 'alias' ] )
+            OR empty( $body[ 'alias' ] )
+            ):
+            $this->log( 'createArticle: некорректные параметры запроса!' );
+            $response[ 'status' ] = 'error';
+            return json_encode( $response );
+        endif;
+
+        // проверяем, авторизован ли пользователь
+        if( !$userAuth = $this->isUserAuth( $body[ 'user_id' ] )
+            OR !$userAuth = $userAuth->toArray()
+            OR !isset( $userAuth[ 'authKey' ] )
+            OR $userAuth[ 'authKey' ] !== $body[ 'auth_key' ]
+            ):
+            $this->log( 'createArticle: Пользователь не аутентифицирован!' );
+            $response[ 'status' ] = 'error';
+            return json_encode( $response );
+        endif;
+
+        // проверка существования subjectCategory
+        if( !SubjectCategoryModel::find( $body[ 'subjectCategory' ] ) ):
+            $this->log( 'createArticle: subjectCategory с _id=' . $body[ 'subjectCategory' ] . ' не существует!' );
+            $response[ 'status' ] = 'error';
+            return json_encode( $response );
+        endif;
+
+        // проверка существования subject
+        if( !$subject = SubjectModel::find( $body[ 'subject' ] ) ):
+            $this->log( 'createArticle: subject с _id=' . $body[ 'subject' ] . ' не существует!' );
+            $response[ 'status' ] = 'error';
+            return json_encode( $response );
+        endif;
+
+        // $this->debug( $subject );return;
+
+        // // проверяем соответствие subject и subjectCategory
+        if( !isset( $subject )
+            OR !is_object( $subject )
+            OR !isset( $subject->subjectCategory )
+            OR $subject->subjectCategory != $body[ 'subjectCategory' ]
+            ):
+            $this->log( 'createArticle: subject с _id=' . $body[ 'subject' ] . ' не входит в subjectCategory с _id=' . $body[ 'subjectCategory' ] . '!' );
+            $response[ 'status' ] = 'error';
+            return json_encode( $response );
+        endif;
+
+        // создаём экземпляр класса
+        $article = new ArticleModel;
+
+        // $this->debug( $article );return;
+
+        // заполняем поля
+        $article->user               = $body[ 'user_id' ];
+        $article->title              = $body[ 'title' ];
+        $article->subject            = $body[ 'subject' ];
+        $article->subjectCategory    = $body[ 'subjectCategory' ];
+        $article->text               = $body[ 'text' ];
+        $article->image              = $body[ 'image' ];
+        $seo[ 'alias' ]              = $body[ 'alias' ];
+        $article->seo                = $seo;
+        $article->date               = time();
+        $article->views              = 0;
+
+        // сохраняем и проверяем
+        if( !$article->save()
+            OR !$insertedId = $article->_id
+            ):
+            $this->log( 'createArticle: не удалось сохранить информацию в базу!' );
+            $response[ 'status' ] = 'error';
+            return json_encode( $response );
+        endif;
+
+        // формируем ответ
+        $response[ 'status'] = 'success';
+        $response[ 'id' ] = $insertedId;
+
+        // возвращаем
+        return json_encode( $response );
+    }
+
 
 
     private function log( $msg )
