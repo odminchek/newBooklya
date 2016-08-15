@@ -17,13 +17,6 @@ Route::get( '/api/feedbacks/profile', 'ApiController@getFeedbacksForUser' );  //
 Route::get( '/api/article/category', 'ApiController@getArticlesFromCategory' );  // ?alias=somethink
 Route::get( '/api/article/one', 'ApiController@getArticleByAlias' );  // ?alias=somethink
 
-// Route::post( '/api/auth/signin', 'ApiController@userSignIn' );
-
-// Route::group( [ 'middleware' => 'cors' ], function( Router $router )
-// {
-//     $router->get( '/api/auth/signin', 'ApiController@userSignIn' );
-// } );
-
 Route::group( [ 'middleware' => 'cors' ], function()
 {
     Route::post( '/api/auth/signin', 'ApiController@userSignIn' );
@@ -42,6 +35,11 @@ Route::group( [ 'middleware' => 'cors' ], function()
 Route::group( [ 'middleware' => 'cors' ], function()
 {
     Route::post( '/api/lessons/create', 'ApiController@createLesson' );
+} );
+
+Route::group( [ 'middleware' => 'cors' ], function()
+{
+    Route::post( '/api/article/create', 'ApiController@createArticle' );
 } );
 
 
