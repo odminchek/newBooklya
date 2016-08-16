@@ -42,12 +42,6 @@ return [
 
         // mongo
         Jenssegers\Mongodb\MongodbServiceProvider::class,
-
-        // CORS
-        Barryvdh\Cors\ServiceProvider::class,
-
-        // jeroen-g/laravel-packager
-        JeroenG\Packager\PackagerServiceProvider::class,
     ],
 
     'aliases' => [
