@@ -65,7 +65,7 @@ Route::post( '/api/lessons/create', 	'ApiController@createLesson' );
 
 // Создание статьи
 // 	{ user_id, auth_key, title, subject, subjectCategory, image, text, alias }
-Route::post( '/api/article/create', 	'ApiController@createArticle' );
+Route::post( '/api/article/create', 	'ApiController@createArticle' )->middleware( [ 'json' ] );
 
 
 

@@ -807,8 +807,6 @@ class ApiController extends Controller
         // создаём экземпляр класса
         $article = new ArticleModel;
 
-        // $this->debug( $article );return;
-
         // заполняем поля
         $article->user               = $body[ 'user_id' ];
         $article->title              = $body[ 'title' ];
