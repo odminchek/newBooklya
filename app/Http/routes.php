@@ -48,19 +48,24 @@ Route::get( '/api/categories/subjects', 'ApiController@getSubjectsForCategory' )
 */
 
 // Авторизация. Получаем auth_key для POST-запросов от пользователя
-Route::post( '/api/auth/signin', 		'ApiController@userSignIn' ); 		//	{ username, password }
+//	{ username, password }
+Route::post( '/api/auth/signin', 		'ApiController@userSignIn' );
 
 // Добавление отзыва о пользователе
-Route::post( '/api/feedbacks/create', 	'ApiController@createFeedback' );	//	{ user_id, auth_key, for_user_id, text }
+//	{ user_id, auth_key, for_user_id, text }
+Route::post( '/api/feedbacks/create', 	'ApiController@createFeedback' );
 
 // Отправка сообщения от пользователя пользователю
-Route::post( '/api/messages/create', 	'ApiController@createMessage' );	//	{ user_id, auth_key, interlocutor, text }
+//	{ user_id, auth_key, interlocutor, text }
+Route::post( '/api/messages/create', 	'ApiController@createMessage' );
 
 // Создание урока
-Route::post( '/api/lessons/create', 	'ApiController@createLesson' );		//	{ user_id, auth_key, start_date, stop_date, price, subject, theme }
+//	{ user_id, auth_key, start_date, stop_date, price, subject, theme }
+Route::post( '/api/lessons/create', 	'ApiController@createLesson' );
 
 // Создание статьи
-Route::post( '/api/article/create', 	'ApiController@createArticle' );	// 	{ user_id, auth_key, title, subject, subjectCategory, image, text, alias }
+// 	{ user_id, auth_key, title, subject, subjectCategory, image, text, alias }
+Route::post( '/api/article/create', 	'ApiController@createArticle' );
 
 
 
