@@ -49,25 +49,37 @@ Route::get( '/api/categories/subjects', 'ApiController@getSubjectsForCategory' )
 
 // Авторизация. Получаем auth_key для POST-запросов от пользователя
 //	{ username, password }
-Route::post( '/api/auth/signin', 		'ApiController@userSignIn' );
+// Route::post( '/api/auth/signin', 		'ApiController@userSignIn' );
 
 // Добавление отзыва о пользователе
 //	{ user_id, auth_key, for_user_id, text }
-Route::post( '/api/feedbacks/create', 	'ApiController@createFeedback' );
+// Route::post( '/api/feedbacks/create', 	'ApiController@createFeedback' );
 
 // Отправка сообщения от пользователя пользователю
 //	{ user_id, auth_key, interlocutor, text }
-Route::post( '/api/messages/create', 	'ApiController@createMessage' );
+// Route::post( '/api/messages/create', 	'ApiController@createMessage' );
 
 // Создание урока
 //	{ user_id, auth_key, start_date, stop_date, price, subject, theme }
-Route::post( '/api/lessons/create', 	'ApiController@createLesson' );
+// Route::post( '/api/lessons/create', 	'ApiController@createLesson' );
 
 // Создание статьи
 // 	{ user_id, auth_key, title, subject, subjectCategory, image, text, alias }
-Route::post( '/api/article/create', 	'ApiController@createArticle' )->middleware( [ 'json' ] );
+// Route::post( '/api/article/create', 	'ApiController@createArticle' )->middleware( [ 'json' ] );
 
-
+// Нам везде приходит JSON, значит, уместно сделать группу роутов с общим JsonMiddleware
+Route::group
+(
+	[ 'middleware' => 'json' ],
+	function()
+	{
+		Route::post( '/api/auth/signin', 		'ApiController@userSignIn' );
+		Route::post( '/api/feedbacks/create', 	'ApiController@createFeedback' );
+		Route::post( '/api/messages/create', 	'ApiController@createMessage' );
+		Route::post( '/api/lessons/create', 	'ApiController@createLesson' );
+		Route::post( '/api/article/create', 	'ApiController@createArticle' );
+	}
+);
 
 /**
 	POST-запросы с CORS (пока нерабочий вариант)
