@@ -505,15 +505,8 @@ class ApiController extends Controller
     public function createFeedback( Request $request )
     {
         // проверяем что нам пришло
-        if( !$request->has( 'body' ) 
-            OR !$body = $request->input( 'body' )
-            OR !$body = json_decode( $body, TRUE )
+        if( !$body = json_decode( $request->input( 'body' ), TRUE )
             OR !is_array( $body )
-            OR !isset( $body[ 'user_id' ] )
-            OR !$this->isMongoId( $body[ 'user_id' ] )
-            OR !isset( $body[ 'auth_key' ] )
-            OR !is_string( $body[ 'auth_key' ] )
-            OR mb_strlen( $body[ 'auth_key' ] ) !== 64
             OR !isset( $body[ 'for_user_id' ] )
             OR !$this->isMongoId( $body[ 'for_user_id' ] )
             OR !isset( $body[ 'text' ] )
@@ -521,17 +514,6 @@ class ApiController extends Controller
             OR empty( $body[ 'text' ] )
             ):
             $this->log( 'createFeedback: некорректные параметры запроса!' );
-            $response[ 'status' ] = 'error';
-            return json_encode( $response );
-        endif;
-
-        // проверяем, авторизован ли пользователь
-        if( !$userAuth = $this->isUserAuth( $body[ 'user_id' ] )
-            OR !$userAuth = $userAuth->toArray()
-            OR !isset( $userAuth[ 'authKey' ] )
-            OR $userAuth[ 'authKey' ] !== $body[ 'auth_key' ]
-            ):
-            $this->log( 'createFeedback: Пользователь не аутентифицирован! user=[' . $body[ 'user_id' ] . '] userWhom=[' . $body[ 'for_user_id' ] . '] text=[' . $body[ 'text' ] . ']' );
             $response[ 'status' ] = 'error';
             return json_encode( $response );
         endif;
@@ -563,16 +545,8 @@ class ApiController extends Controller
     public function createMessage( Request $request )
     {
         // проверяем что нам пришло
-        if( !$request->has( 'body' ) 
-            OR !$body = json_decode( $request->input( 'body' ), TRUE )
+        if( !$body = json_decode( $request->input( 'body' ), TRUE )
             OR !is_array( $body )
-
-            OR !isset( $body[ 'user_id' ] )
-            OR !$this->isMongoId( $body[ 'user_id' ] )
-
-            OR !isset( $body[ 'auth_key' ] )
-            OR !is_string( $body[ 'auth_key' ] )
-            OR mb_strlen( $body[ 'auth_key' ] ) !== 64
 
             OR !isset( $body[ 'interlocutor' ] )
             OR !$this->isMongoId( $body[ 'interlocutor' ] )
@@ -582,17 +556,6 @@ class ApiController extends Controller
             OR empty( $body[ 'text' ] )
             ):
             $this->log( 'createMessage: некорректные параметры запроса!' );
-            $response[ 'status' ] = 'error';
-            return json_encode( $response );
-        endif;
-
-        // проверяем, авторизован ли пользователь
-        if( !$userAuth = $this->isUserAuth( $body[ 'user_id' ] )
-            OR !$userAuth = $userAuth->toArray()
-            OR !isset( $userAuth[ 'authKey' ] )
-            OR $userAuth[ 'authKey' ] !== $body[ 'auth_key' ]
-            ):
-            $this->log( 'createMessage: Пользователь не аутентифицирован!' );
             $response[ 'status' ] = 'error';
             return json_encode( $response );
         endif;
@@ -657,16 +620,8 @@ class ApiController extends Controller
     public function createLesson( Request $request )
     {
         // проверяем что нам пришло
-        if( !$request->has( 'body' ) 
-            OR !$body = json_decode( $request->input( 'body' ), TRUE )
+        if( !$body = json_decode( $request->input( 'body' ), TRUE )
             OR !is_array( $body )
-
-            OR !isset( $body[ 'user_id' ] )
-            OR !$this->isMongoId( $body[ 'user_id' ] )
-
-            OR !isset( $body[ 'auth_key' ] )
-            OR !is_string( $body[ 'auth_key' ] )
-            OR mb_strlen( $body[ 'auth_key' ] ) !== 64
 
             OR !isset( $body[ 'start_date' ] )
             OR !is_numeric( $body[ 'start_date' ] )
@@ -685,17 +640,6 @@ class ApiController extends Controller
             OR empty( $body[ 'theme' ] )
             ):
             $this->log( 'createLesson: некорректные параметры запроса!' );
-            $response[ 'status' ] = 'error';
-            return json_encode( $response );
-        endif;
-
-        // проверяем, авторизован ли пользователь
-        if( !$userAuth = $this->isUserAuth( $body[ 'user_id' ] )
-            OR !$userAuth = $userAuth->toArray()
-            OR !isset( $userAuth[ 'authKey' ] )
-            OR $userAuth[ 'authKey' ] !== $body[ 'auth_key' ]
-            ):
-            $this->log( 'createLesson: Пользователь не аутентифицирован!' );
             $response[ 'status' ] = 'error';
             return json_encode( $response );
         endif;
@@ -729,16 +673,8 @@ class ApiController extends Controller
     public function createArticle( Request $request )
     {
         // проверяем что нам пришло
-        if( !$request->has( 'body' ) 
-            OR !$body = json_decode( $request->input( 'body' ), TRUE )
+        if( !$body = json_decode( $request->input( 'body' ), TRUE )
             OR !is_array( $body )
-
-            OR !isset( $body[ 'user_id' ] )
-            OR !$this->isMongoId( $body[ 'user_id' ] )
-
-            OR !isset( $body[ 'auth_key' ] )
-            OR !is_string( $body[ 'auth_key' ] )
-            OR mb_strlen( $body[ 'auth_key' ] ) !== 64
 
             OR !isset( $body[ 'title' ] )
             OR !is_string( $body[ 'title' ] )
@@ -766,17 +702,6 @@ class ApiController extends Controller
             return json_encode( $response );
         endif;
 
-        // проверяем, авторизован ли пользователь
-        if( !$userAuth = $this->isUserAuth( $body[ 'user_id' ] )
-            OR !$userAuth = $userAuth->toArray()
-            OR !isset( $userAuth[ 'authKey' ] )
-            OR $userAuth[ 'authKey' ] !== $body[ 'auth_key' ]
-            ):
-            $this->log( 'createArticle: Пользователь не аутентифицирован!' );
-            $response[ 'status' ] = 'error';
-            return json_encode( $response );
-        endif;
-
         // проверка существования subjectCategory
         if( !SubjectCategoryModel::find( $body[ 'subjectCategory' ] ) ):
             $this->log( 'createArticle: subjectCategory с _id=' . $body[ 'subjectCategory' ] . ' не существует!' );
@@ -790,8 +715,6 @@ class ApiController extends Controller
             $response[ 'status' ] = 'error';
             return json_encode( $response );
         endif;
-
-        // $this->debug( $subject );return;
 
         // // проверяем соответствие subject и subjectCategory
         if( !isset( $subject )
