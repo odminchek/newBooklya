@@ -14,7 +14,7 @@ class JsonMiddleware
     {
         if( !$request->has( 'body' )
             OR !is_string( $request->input( 'body' ) )
-            OR json_decode( $request->input( 'body' ), TRUE )
+            OR !json_decode( $request->input( 'body' ), TRUE )
             ):
             return response()->json( [ 'status' => 'error', 'HTTP' => '400 Bad Request' ] );
         endif;
