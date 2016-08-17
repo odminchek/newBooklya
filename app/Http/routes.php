@@ -73,11 +73,21 @@ Route::group
 	[ 'middleware' => 'json' ],
 	function()
 	{
+		// авторизация
 		Route::post( '/api/auth/signin', 		'ApiController@userSignIn' );
-		Route::post( '/api/feedbacks/create', 	'ApiController@createFeedback' );
-		Route::post( '/api/messages/create', 	'ApiController@createMessage' );
-		Route::post( '/api/lessons/create', 	'ApiController@createLesson' );
-		Route::post( '/api/article/create', 	'ApiController@createArticle' );
+
+		// а тут нам надо ещё проверить был ли юзер авторизован
+		Route::group
+		(
+			[ 'middleware' => 'apiauth' ],
+			function()
+			{
+				Route::post( '/api/feedbacks/create', 	'ApiController@createFeedback' );
+				Route::post( '/api/messages/create', 	'ApiController@createMessage' );
+				Route::post( '/api/lessons/create', 	'ApiController@createLesson' );
+				Route::post( '/api/article/create', 	'ApiController@createArticle' );
+			}
+		);
 	}
 );
 
