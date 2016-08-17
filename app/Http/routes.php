@@ -47,77 +47,38 @@ Route::get( '/api/categories/subjects', 'ApiController@getSubjectsForCategory' )
 	POST-запросы
 */
 
-// Авторизация. Получаем auth_key для POST-запросов от пользователя
-//	{ username, password }
-// Route::post( '/api/auth/signin', 		'ApiController@userSignIn' );
-
-// Добавление отзыва о пользователе
-//	{ user_id, auth_key, for_user_id, text }
-// Route::post( '/api/feedbacks/create', 	'ApiController@createFeedback' );
-
-// Отправка сообщения от пользователя пользователю
-//	{ user_id, auth_key, interlocutor, text }
-// Route::post( '/api/messages/create', 	'ApiController@createMessage' );
-
-// Создание урока
-//	{ user_id, auth_key, start_date, stop_date, price, subject, theme }
-// Route::post( '/api/lessons/create', 	'ApiController@createLesson' );
-
-// Создание статьи
-// 	{ user_id, auth_key, title, subject, subjectCategory, image, text, alias }
-// Route::post( '/api/article/create', 	'ApiController@createArticle' )->middleware( [ 'json' ] );
-
-// Нам везде приходит JSON, значит, уместно сделать группу роутов с общим JsonMiddleware
+// Проверка входных данных (JSON)
 Route::group
 (
 	[ 'middleware' => 'json' ],
 	function()
 	{
-		// авторизация
+		// Авторизация. Получаем auth_key для POST-запросов от пользователя
+		// { username, password }
 		Route::post( '/api/auth/signin', 		'ApiController@userSignIn' );
 
-		// а тут нам надо ещё проверить был ли юзер авторизован
+		// Аутентификация
 		Route::group
 		(
 			[ 'middleware' => 'apiauth' ],
 			function()
 			{
+				// Добавление отзыва о пользователе
+				// { user_id, auth_key, for_user_id, text }
 				Route::post( '/api/feedbacks/create', 	'ApiController@createFeedback' );
+
+				// Отправка сообщения от пользователя пользователю
+				// { user_id, auth_key, interlocutor, text }
 				Route::post( '/api/messages/create', 	'ApiController@createMessage' );
+
+				// Создание урока
+				// { user_id, auth_key, start_date, stop_date, price, subject, theme }
 				Route::post( '/api/lessons/create', 	'ApiController@createLesson' );
+
+				// Создание статьи
+				// { user_id, auth_key, title, subject, subjectCategory, image, text, alias }
 				Route::post( '/api/article/create', 	'ApiController@createArticle' );
 			}
 		);
 	}
 );
-
-/**
-	POST-запросы с CORS (пока нерабочий вариант)
-**/
-
-// Route::group( [ 'middleware' => 'cors' ], function()
-// {
-//     Route::post( '/api/auth/signin', 'ApiController@userSignIn' );
-// } );
-
-// Route::group( [ 'middleware' => 'cors' ], function()
-// {
-//     Route::post( '/api/feedbacks/create', 'ApiController@createFeedback' );
-// } );
-
-// Route::group( [ 'middleware' => 'cors' ], function()
-// {
-//     Route::post( '/api/messages/create', 'ApiController@createMessage' );
-// } );
-
-// Route::group( [ 'middleware' => 'cors' ], function()
-// {
-//     Route::post( '/api/lessons/create', 'ApiController@createLesson' );
-// } );
-
-// Route::group( [ 'middleware' => 'cors' ], function()
-// {
-//     Route::post( '/api/article/create', 'ApiController@createArticle' );
-// } );
-
-
