@@ -394,10 +394,8 @@ class ApiController extends Controller
 
     public function userSignIn( Request $request )
     {
-        // смотрим что нам
-        if( !$request->has( 'body' )
-            OR !$body = $request->input( 'body' )
-            OR !$body = json_decode( $body, TRUE )
+        // смотрим что нам пришло
+        if( !$body = json_decode( $request->input( 'body' ), TRUE )
             OR !isset( $body[ 'username' ] )
             OR !is_string( $body[ 'username' ] )
             OR empty( $body[ 'username' ] )
@@ -518,6 +516,13 @@ class ApiController extends Controller
             return json_encode( $response );
         endif;
 
+        // проверяем, что существует юзер, о котором нужно оставить отзыв
+        if( !UserModel::find( $body[ 'for_user_id' ] ) ):
+            $this->log( 'createFeedback: пользователь с _id=' . $body[ 'for_user_id' ] . ' не существует!' );
+            $response[ 'status' ] = 'error';
+            return json_encode( $response );
+        endif;
+
         // создаём экземпляр класса и заполняем поля
         $feedbackModel = new FeedbackModel;
         $feedbackModel->user = $body[ 'user_id' ];
@@ -556,6 +561,13 @@ class ApiController extends Controller
             OR empty( $body[ 'text' ] )
             ):
             $this->log( 'createMessage: некорректные параметры запроса!' );
+            $response[ 'status' ] = 'error';
+            return json_encode( $response );
+        endif;
+
+        // проверяем, что существует юзер, которому адресовано сообщение
+        if( !UserModel::find( $body[ 'interlocutor' ] ) ):
+            $this->log( 'createMessage: пользователь с _id=' . $body[ 'interlocutor' ] . ' не существует!' );
             $response[ 'status' ] = 'error';
             return json_encode( $response );
         endif;
@@ -644,6 +656,13 @@ class ApiController extends Controller
             return json_encode( $response );
         endif;
 
+        // проверяем, что существует тема, к которой будет относиться добавляемый урок
+        if( !SubjectModel::find( $body[ 'subject' ] ) ):
+            $this->log( 'createLesson: subject с _id=' . $body[ 'subject' ] . ' не существует!' );
+            $response[ 'status' ] = 'error';
+            return json_encode( $response );
+        endif;
+
         // создаём экземпляр класса и заполняем поля
         $lessonModel = new LessonModel;
         $lessonModel->learner = $body[ 'user_id' ];
@@ -701,6 +720,25 @@ class ApiController extends Controller
             $response[ 'status' ] = 'error';
             return json_encode( $response );
         endif;
+
+         // проверки связей
+        if( !SubjectModel::find( $body[ 'subject' ] ) ):
+            $this->log( 'createArticle: subject с _id=' . $body[ 'subject' ] . ' не существует!' );
+            $response[ 'status' ] = 'error';
+            return json_encode( $response );
+        endif;
+
+        if( !SubjectCategoryModel::find( $body[ 'subjectCategory' ] ) ):
+            $this->log( 'createArticle: subjectCategory с _id=' . $body[ 'subjectCategory' ] . ' не существует!' );
+            $response[ 'status' ] = 'error';
+            return json_encode( $response );
+        endif;
+
+        // if( !ImageModel::find( $body[ 'image' ] ) ):
+        //     $this->log( 'createArticle: image с _id=' . $body[ 'image' ] . ' не существует!' );
+        //     $response[ 'status' ] = 'error';
+        //     return json_encode( $response );
+        // endif;
 
         // проверка существования subjectCategory
         if( !SubjectCategoryModel::find( $body[ 'subjectCategory' ] ) ):
