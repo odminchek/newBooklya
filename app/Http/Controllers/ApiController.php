@@ -32,7 +32,7 @@ class ApiController extends Controller
     		// Если не получили, пишем лог (пока не работает)
     		$this->log( 'categoriesGetAll: Список не получен!' );
     		// Возвращаем пустой массив
-    		return json_encode( array() );
+    		return json_encode( [ 'status' => 'error' ] );
     	endif;
 
     	// Если всё хорошо, кодируем в JSON и отдаём
@@ -49,7 +49,7 @@ class ApiController extends Controller
     		// пишем лог
     		$this->log( 'webinarsFromCategory: Некорректный alias!' );
     		// возвращаем пустой массив
-    		return json_encode( array() );
+    		return json_encode( [ 'status' => 'error' ] );
     	endif;
 
     	// находим и проверяем корректность получения категории с этим алиасом
@@ -62,7 +62,7 @@ class ApiController extends Controller
     		// пишем лог
     		$this->log( 'webinarsFromCategory: Не получена категория с алиасом ' . $alias . '!' );
     		// возвращаем пустой массив
-    		return json_encode( array() );
+    		return json_encode( [ 'status' => 'error' ] );
     	endif;
 
     	// находим и проверяем корректность получения всех тем, входящих в данную категорию
@@ -75,7 +75,7 @@ class ApiController extends Controller
     		// пишем лог
     		$this->log( 'webinarsFromCategory: Не получены темы, входящие в категорию с алиасом ' . $alias . '!' );
     		// возвращаем пустой массив
-    		return json_encode( array() );
+    		return json_encode( [ 'status' => 'error' ] );
     	endif;
 
     	// Получаем ID всех тем, входящих в данную категорию
@@ -100,7 +100,7 @@ class ApiController extends Controller
     		// пишем лог
     		$this->log( 'webinarsFromCategory: Не получены ID тем, входящих в категорию с алиасом ' . $alias . '!' );
     		// возвращаем пустой массив
-    		return json_encode( array() );
+    		return json_encode( [ 'status' => 'error' ] );
     	endif;
 
     	// Получаем вебинары и проверяем корректность получения
@@ -113,7 +113,7 @@ class ApiController extends Controller
     		// пишем лог
     		$this->log( 'webinarsFromCategory: Не получены вебинары категории с алиасом ' . $alias . '!' );
     		// возвращаем пустой массив
-    		return json_encode( array() );
+    		return json_encode( [ 'status' => 'error' ] );
     	endif;
 
     	// помещаем вебинары в категорию
@@ -133,7 +133,7 @@ class ApiController extends Controller
             // пишем лог
             $this->log( 'webinarWithSubjAndSubjCat: Некорректный alias!' );
             // возвращаем пустой массив
-            return json_encode( array() );
+            return json_encode( [ 'status' => 'error' ] );
         endif;
 
         // получаем вебинар и проверяем
@@ -148,7 +148,7 @@ class ApiController extends Controller
             // пишем лог
             $this->log( 'webinarWithSubjAndSubjCat: Не получен вебинар с алиасом ' . $alias . '!' );
             // возвращаем пустой массив
-            return json_encode( array() );
+            return json_encode( [ 'status' => 'error' ] );
         endif;
 
         // получаем subject
@@ -163,7 +163,7 @@ class ApiController extends Controller
             // пишем лог
             $this->log( 'webinarWithSubjAndSubjCat: Не получена subject для вебинара с алиасом ' . $alias . '!' );
             // возвращаем пустой массив
-            return json_encode( array() );
+            return json_encode( [ 'status' => 'error' ] );
         endif;
 
         // если всё ОК, заносим subject в webinar и очищаем
@@ -180,7 +180,7 @@ class ApiController extends Controller
             // пишем лог
             $this->log( 'webinarWithSubjAndSubjCat: Не получена subjectCategory для вебинара с алиасом ' . $alias . '!' );
             // возвращаем пустой массив
-            return json_encode( array() );
+            return json_encode( [ 'status' => 'error' ] );
         endif;
 
         // если всё ОК, заносим subjectCategory в webinar и очищаем
@@ -201,7 +201,7 @@ class ApiController extends Controller
     		// пишем лог
     		$this->log( 'getExperts: Некорректный alias!' );
     		// возвращаем пустой массив
-    		return json_encode( array() );
+    		return json_encode( [ 'status' => 'error' ] );
     	endif;
 
     	// получаем категорию по алиасу и проверяем корректность получения
@@ -216,7 +216,7 @@ class ApiController extends Controller
     		// пишем лог
     		$this->log( 'getExperts: Не получена subjectCategory!' );
     		// возвращаем пустой массив
-    		return json_encode( array() );
+    		return json_encode( [ 'status' => 'error' ] );
     	endif;
 
     	// получаем экспертов этой категории и проверяем корректность получения
@@ -229,7 +229,7 @@ class ApiController extends Controller
     		// пишем лог
     		$this->log( 'getExperts: Не получены эксперты для категории ' . $alias . '!' );
     		// возвращаем пустой массив
-    		return json_encode( array() );
+    		return json_encode( [ 'status' => 'error' ] );
     	endif;
 
        	// если всё ок, засовываем в категорию её экспертов
@@ -248,7 +248,7 @@ class ApiController extends Controller
             // пишем лог
             $this->log( 'getOneProfile: Некорректный id! [' . $id . ']' );
             // возвращаем пустой массив
-            return json_encode( array() );
+            return json_encode( [ 'status' => 'error' ] );
         endif;
 
         // получаем юзера и проверяем корректность получения
@@ -260,7 +260,7 @@ class ApiController extends Controller
             ):
             $this->log( 'getOneProfile: Не найден пользователь с _id=' . $id . '!' );
             // возвращаем пустой массив
-            return json_encode( array() );
+            return json_encode( [ 'status' => 'error' ] );
         endif;
 
         // если всё ОК
@@ -277,7 +277,7 @@ class ApiController extends Controller
             // пишем лог
             $this->log( 'getArticlesFromCategory: Некорректный alias!' );
             // возвращаем пустой массив
-            return json_encode( array() );
+            return json_encode( [ 'status' => 'error' ] );
         endif;
 
         // получаем категорию по алиасу и проверяем корректность получения
@@ -290,7 +290,7 @@ class ApiController extends Controller
             // пишем лог
             $this->log( 'getArticlesFromCategory: Не получена subjectCategory!' );
             // возвращаем пустой массив
-            return json_encode( array() );
+            return json_encode( [ 'status' => 'error' ] );
         endif;
 
         // получаем статьи, относящиеся к данной категории и првоеряем корректность полученных данных
@@ -303,7 +303,7 @@ class ApiController extends Controller
             // пишем лог
             $this->log( 'getArticlesFromCategory: Не список статей для категории с алиасом ' . $alias . '!' );
             // возвращаем пустой массив
-            return json_encode( array() );
+            return json_encode( [ 'status' => 'error' ] );
         endif;
 
         // если всё ОК
@@ -320,7 +320,7 @@ class ApiController extends Controller
             // пишем лог
             $this->log( 'getArticleByAlias: Некорректный alias!' );
             // возвращаем пустой массив
-            return json_encode( array() );
+            return json_encode( [ 'status' => 'error' ] );
         endif;
 
         // пробуем получить статью по алиасу и проверяем корректность получения
@@ -334,7 +334,7 @@ class ApiController extends Controller
             // пишем лог
             $this->log( 'getArticleByAlias: Статья с алиасом ' . $alias . ' не получена!' );
             // возвращаем пустой массив
-            return json_encode( array() );
+            return json_encode( [ 'status' => 'error' ] );
         endif;
 
         // если всё ОК
@@ -350,7 +350,7 @@ class ApiController extends Controller
              // пишем лог
             $this->log( 'getArticlesByUser: Некорректный id юзера!' );
              // возвращаем пустой массив
-            return json_encode( array() );
+            return json_encode( [ 'status' => 'error' ] );
         endif;
 
         // получаем статьи, соотв. этому юзеру, и проверяем
@@ -361,7 +361,7 @@ class ApiController extends Controller
             OR !$articles = $this->changeId( $articles )
             ):
             $this->log( 'getArticlesByUser: Не получены статьи юзера с id ' . $id );
-            return json_encode( array() );
+            return json_encode( [ 'status' => 'error' ] );
         endif;
 
         return json_encode( $articles );
@@ -375,7 +375,7 @@ class ApiController extends Controller
              // пишем лог
             $this->log( 'getFeedbacksForUser: Некорректный id юзера!' );
              // возвращаем пустой массив
-            return json_encode( array() );
+            return json_encode( [ 'status' => 'error' ] );
         endif;
 
         // получаем отзывы, соотв. этому юзеру, и проверяем
@@ -386,7 +386,7 @@ class ApiController extends Controller
             OR !$feedbacks = $this->changeId( $feedbacks )
             ):
             $this->log( 'getFeedbacksForUser: Не получены отзывы юзера с id ' . $id );
-            return json_encode( array() );
+            return json_encode( [ 'status' => 'error' ] );
         endif;
 
         return json_encode( $feedbacks );
@@ -404,8 +404,7 @@ class ApiController extends Controller
             OR empty( $body[ 'password' ] )
             ):
             $this->log( 'userSignIn: Учётные данные некорректны!' );
-            $response[ 'status' ] = 'error';
-            return json_encode( $response );
+            return json_encode( [ 'status' => 'error' ] );
         endif;
 
         // пытаемся найти такого юзера
@@ -416,8 +415,7 @@ class ApiController extends Controller
             OR !isset( $user[ '_id' ] )
             ):
             $this->log( 'userSignIn: Не найден пользователь с username = ' . $body[ 'username' ] . '!' );
-            $response[ 'status' ] = 'error';
-            return json_encode( $response );
+            return json_encode( [ 'status' => 'error' ] );
         endif;
 
         // проверяем пароль
@@ -427,8 +425,7 @@ class ApiController extends Controller
             OR $user[ 'password' ] !== md5( $body[ 'password' ] )
             ):
             $this->log( 'userSignIn: Неверный пароль для пользователя с username = ' . $body[ 'username' ] . '!' );
-            $response[ 'status' ] = 'error';
-            return json_encode( $response );
+            return json_encode( [ 'status' => 'error' ] );
         endif;
 
         // кладём в ответ id юзера
@@ -444,10 +441,8 @@ class ApiController extends Controller
             if( !$userAuthModel->save() ):
                 // пишем лог
                 $this->log( 'userSignIn: ошибка сохранения auth_key для юзера с id=' . $user[ '_id' ] );
-                // статус - ошибка
-                $response[ 'status' ] = 'error';
                 // возвращаем ответ
-                return json_encode( $response );
+                return json_encode( [ 'status' => 'error' ] );
             endif;
         else:
             // если нет, авторизуем
@@ -458,17 +453,12 @@ class ApiController extends Controller
             if( !$userAuthModel->save() ):
                 // пишем лог
                 $this->log( 'userSignIn: ошибка сохранения auth_key для юзера с id=' . $user[ '_id' ] );
-                // статус - ошибка
-                $response[ 'status' ] = 'error';
                 // возвращаем ответ
-                return json_encode( $response );
+                return json_encode( [ 'status' => 'error' ] );
             endif;
         endif;
 
-        $response[ 'status' ] = 'success';
-        $response[ 'user_auth_key' ] = $userAuthKey;
-
-        return $response;
+        return json_encode( [ 'status' => 'success', 'user_auth_key' => $userAuthKey ] );
     }
 
     public function getSubjectsForCategory( Request $request )
@@ -480,7 +470,7 @@ class ApiController extends Controller
             // пишем лог
             $this->log( 'getSubjectsForCategory: Некорректный id!' );
             // возвращаем пустой массив
-            return json_encode( array() );
+            return json_encode( [ 'status' => 'error' ] );
         endif;
 
         // получаем темы для категории с этим _id
@@ -493,7 +483,7 @@ class ApiController extends Controller
             // пишем лог
             $this->log( 'getSubjectsForCategory: Не получены subjects!' );
             // возвращаем пустой массив
-            return json_encode( array() );
+            return json_encode( [ 'status' => 'error' ] );
         endif;
 
         // если всё ОК
@@ -512,15 +502,13 @@ class ApiController extends Controller
             OR empty( $body[ 'text' ] )
             ):
             $this->log( 'createFeedback: некорректные параметры запроса!' );
-            $response[ 'status' ] = 'error';
-            return json_encode( $response );
+            return json_encode( [ 'status' => 'error' ] );
         endif;
 
         // проверяем, что существует юзер, о котором нужно оставить отзыв
         if( !UserModel::find( $body[ 'for_user_id' ] ) ):
             $this->log( 'createFeedback: пользователь с _id=' . $body[ 'for_user_id' ] . ' не существует!' );
-            $response[ 'status' ] = 'error';
-            return json_encode( $response );
+            return json_encode( [ 'status' => 'error' ] );
         endif;
 
         // создаём экземпляр класса и заполняем поля
@@ -535,16 +523,11 @@ class ApiController extends Controller
             OR !$this->isMongoId( $insertedId )
             ):
             $this->log( 'createFeedback: не удалось сохранить модель! user=[' . $body[ 'user_id' ] . '] userWhom=[' . $body[ 'for_user_id' ] . '] text=[' . $body[ 'text' ] . ']' );
-            $response[ 'status' ] = 'error';
-            return json_encode( $response );
+            return json_encode( [ 'status' => 'error' ] );
         endif;
 
-        // если всё ОК, формируем ответ
-        $response[ 'status' ] = 'success';
-        $response[ 'inserted_id' ] = $insertedId;
-
         // возвращаем ID добавленного отзыва
-        return json_encode( $response );
+        return json_encode( [ 'status' => 'success', 'inserted_id' => $insertedId ] );
     }
 
     public function createMessage( Request $request )
@@ -561,15 +544,13 @@ class ApiController extends Controller
             OR empty( $body[ 'text' ] )
             ):
             $this->log( 'createMessage: некорректные параметры запроса!' );
-            $response[ 'status' ] = 'error';
-            return json_encode( $response );
+            return json_encode( [ 'status' => 'error' ] );
         endif;
 
         // проверяем, что существует юзер, которому адресовано сообщение
         if( !UserModel::find( $body[ 'interlocutor' ] ) ):
             $this->log( 'createMessage: пользователь с _id=' . $body[ 'interlocutor' ] . ' не существует!' );
-            $response[ 'status' ] = 'error';
-            return json_encode( $response );
+            return json_encode( [ 'status' => 'error' ] );
         endif;
 
         // создаём экземпляр класса, заполняем поля и сохраняем в базу (первое сообщение, для получателя)
@@ -587,8 +568,7 @@ class ApiController extends Controller
             OR !$this->isMongoId( $firstInsertedId )
             ):
             $this->log( 'createMessage: Сообщение для получателя не сохранено!' );
-            $response[ 'status' ] = 'error';
-            return json_encode( $response );
+            return json_encode( [ 'status' => 'error' ] );
         endif;
         
         // создаём экземпляр класса, заполняем поля и сохраняем в базу (второе сообщение, для отправителя)
@@ -614,19 +594,11 @@ class ApiController extends Controller
                 $this->log( 'createMessage: Сообщение для получателя не удалено!' );
             endif;
             // ошибку в статус и возвращаем
-            $response[ 'status' ] = 'error';
-            return json_encode( $response );
+            return json_encode( [ 'status' => 'error' ] );
         endif;
 
-        // получаем _id добавленного сообщения
-        $insertedId = $messageModel->_id;
-
-        // формируем ответ
-        $response[ 'status' ] = 'success';
-        $response[ 'new_message_id' ] = $insertedId;
-
         // возвращаем
-        return json_encode( $response );
+        return json_encode( [ 'status' => 'success', 'new_message_id' => $messageModel->_id ] );
     }
 
     public function createLesson( Request $request )
@@ -652,15 +624,13 @@ class ApiController extends Controller
             OR empty( $body[ 'theme' ] )
             ):
             $this->log( 'createLesson: некорректные параметры запроса!' );
-            $response[ 'status' ] = 'error';
-            return json_encode( $response );
+            return json_encode( [ 'status' => 'error' ] );
         endif;
 
         // проверяем, что существует тема, к которой будет относиться добавляемый урок
         if( !SubjectModel::find( $body[ 'subject' ] ) ):
             $this->log( 'createLesson: subject с _id=' . $body[ 'subject' ] . ' не существует!' );
-            $response[ 'status' ] = 'error';
-            return json_encode( $response );
+            return json_encode( [ 'status' => 'error' ] );
         endif;
 
         // создаём экземпляр класса и заполняем поля
@@ -677,8 +647,7 @@ class ApiController extends Controller
             OR !$insertedId = $lessonModel->_id
             ):
             $this->log( 'createLesson: урок не добавлен!' );
-            $response[ 'status' ] = 'error';
-            return json_encode( $response );
+            return json_encode( [ 'status' => 'error' ] );
         endif;
 
         // если всё ОК, формируем ответ
@@ -686,7 +655,7 @@ class ApiController extends Controller
         $response[ 'lesson_id' ] = $insertedId;
 
         // возвращаем
-        return json_encode( $response );
+        return json_encode( [ 'status' => 'success', 'lesson_id' => $insertedId ] );
     }
 
     public function createArticle( Request $request )
@@ -717,41 +686,35 @@ class ApiController extends Controller
             OR empty( $body[ 'alias' ] )
             ):
             $this->log( 'createArticle: некорректные параметры запроса!' );
-            $response[ 'status' ] = 'error';
-            return json_encode( $response );
+            return json_encode( [ 'status' => 'error' ] );
         endif;
 
          // проверки связей
         if( !SubjectModel::find( $body[ 'subject' ] ) ):
             $this->log( 'createArticle: subject с _id=' . $body[ 'subject' ] . ' не существует!' );
-            $response[ 'status' ] = 'error';
-            return json_encode( $response );
+            return json_encode( [ 'status' => 'error' ] );
         endif;
 
         if( !SubjectCategoryModel::find( $body[ 'subjectCategory' ] ) ):
             $this->log( 'createArticle: subjectCategory с _id=' . $body[ 'subjectCategory' ] . ' не существует!' );
-            $response[ 'status' ] = 'error';
-            return json_encode( $response );
+            return json_encode( [ 'status' => 'error' ] );
         endif;
 
         // if( !ImageModel::find( $body[ 'image' ] ) ):
         //     $this->log( 'createArticle: image с _id=' . $body[ 'image' ] . ' не существует!' );
-        //     $response[ 'status' ] = 'error';
-        //     return json_encode( $response );
+        //     return json_encode( [ 'status' => 'error' ] );
         // endif;
 
         // проверка существования subjectCategory
         if( !SubjectCategoryModel::find( $body[ 'subjectCategory' ] ) ):
             $this->log( 'createArticle: subjectCategory с _id=' . $body[ 'subjectCategory' ] . ' не существует!' );
-            $response[ 'status' ] = 'error';
-            return json_encode( $response );
+            return json_encode( [ 'status' => 'error' ] );
         endif;
 
         // проверка существования subject
         if( !$subject = SubjectModel::find( $body[ 'subject' ] ) ):
             $this->log( 'createArticle: subject с _id=' . $body[ 'subject' ] . ' не существует!' );
-            $response[ 'status' ] = 'error';
-            return json_encode( $response );
+            return json_encode( [ 'status' => 'error' ] );
         endif;
 
         // // проверяем соответствие subject и subjectCategory
@@ -761,8 +724,7 @@ class ApiController extends Controller
             OR $subject->subjectCategory != $body[ 'subjectCategory' ]
             ):
             $this->log( 'createArticle: subject с _id=' . $body[ 'subject' ] . ' не входит в subjectCategory с _id=' . $body[ 'subjectCategory' ] . '!' );
-            $response[ 'status' ] = 'error';
-            return json_encode( $response );
+            return json_encode( [ 'status' => 'error' ] );
         endif;
 
         // создаём экземпляр класса
@@ -785,16 +747,11 @@ class ApiController extends Controller
             OR !$insertedId = $article->_id
             ):
             $this->log( 'createArticle: не удалось сохранить информацию в базу!' );
-            $response[ 'status' ] = 'error';
-            return json_encode( $response );
+            return json_encode( [ 'status' => 'error' ] );
         endif;
 
-        // формируем ответ
-        $response[ 'status'] = 'success';
-        $response[ 'id' ] = $insertedId;
-
         // возвращаем
-        return json_encode( $response );
+        return json_encode( [ 'status' => 'success', 'id' => $insertedId ] );
     }
 
 
