@@ -37,25 +37,3 @@ class ApiAuthMiddleware
         return $next($request);
     }
 }
-
-
-/*
-
-        if( !$this->isMongoId( $userId )
-            OR !$userAuth = UserAuthModel::where( 'userId', '=', $userId )->first()
-            ):
-            return FALSE;
-        endif;
-
-        return $userAuth;
-
-
-    if( !is_string( $mongoId )
-            OR mb_strlen( $mongoId ) !== 24
-            OR !ctype_xdigit( $mongoId )
-            ):
-            return FALSE;
-        endif;
-
-
-*/
