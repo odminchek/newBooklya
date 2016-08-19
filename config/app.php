@@ -12,15 +12,12 @@ return [
     'log' => env('APP_LOG', 'errorlog'),
 
     // сюда мы будем загружать пользовательские кратинки
-    'image_upload_dir' => __DIR__ 
-        . DIRECTORY_SEPARATOR 
-        . '..' 
-        . DIRECTORY_SEPARATOR 
-        . 'public' 
-        . DIRECTORY_SEPARATOR 
-        . 'uploads'
+    'image_domain' => 'http://booklya.l',
+    'image_upload_dir' => 'uploads'
         . DIRECTORY_SEPARATOR
         . 'images',
+    'image_url' => 'uploads' . DIRECTORY_SEPARATOR,
+
 
     'providers' => [
         // Laravel Framework Service Providers...

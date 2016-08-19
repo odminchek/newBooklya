@@ -14,6 +14,7 @@ use App\FeedbackModel;
 use App\UserAuthModel;
 use App\MessageModel;
 use App\LessonModel;
+use Config;
 
 class ApiController extends Controller
 {
@@ -752,6 +753,74 @@ class ApiController extends Controller
 
         // возвращаем
         return json_encode( [ 'status' => 'success', 'id' => $insertedId ] );
+    }
+
+    public function imageUpload( Request $request )
+    {
+        // проверяем что нам пришло
+        if( !$body = json_decode( $request->input( 'body' ), TRUE )
+            OR !is_array( $body )
+
+            OR !isset( $body[ 'for_type' ] )
+            OR !is_string( $body[ 'for_type' ] )
+            OR !mb_strlen( $body[ 'for_type' ] )
+
+            OR !isset( $body[ 'filename' ] )
+            OR !is_string( $body[ 'filename' ] )
+            OR !mb_strlen( $body[ 'filename' ] )
+
+            OR !isset( $body[ 'for_id' ] )
+            OR !$this->isMongoId( $body[ 'for_id' ] )
+
+            OR !isset( $body[ 'image' ] )
+            OR !is_string( $body[ 'image' ] )
+            OR empty( $body[ 'image' ] )
+            OR !$image = base64_decode( $body[ 'image' ], TRUE )
+            ):
+            $this->log( 'imageUpload: входные данные некорректны!' );
+            return json_encode( [ 'status' => 'error' ] );
+        endif;
+
+        // формируем имя папки для загрузки
+        $upload_dir = Config::get('app.image_upload_dir')
+            . DIRECTORY_SEPARATOR . $body[ 'user_id' ] 
+            . DIRECTORY_SEPARATOR . $body[ 'for_type' ]
+            . DIRECTORY_SEPARATOR . $body[ 'for_id' ];
+
+        // проверяем существование папки, если нету - создаём
+        if( !file_exists( $upload_dir ) ):
+            // создаём папку для сохранения и проверяем
+            if( !mkdir( $upload_dir, 0777, TRUE ) ):
+                $this->log( 'imageUpload: не удалось создать дирректорию ' . $upload_dir . '!' );
+                return json_encode( [ 'status' => 'error' ] );
+            endif;
+        endif;
+
+        // формируем имя файла для сохранения
+        $tmp = pathinfo( $body[ 'filename' ] );
+        $file_name = $tmp[ 'filename' ] . '_' . time() . '.' . $tmp[ 'extension' ];
+
+        // формируем имя дирректории для сохранения
+        $upload_file_name = $_SERVER[ 'DOCUMENT_ROOT' ] 
+            . DIRECTORY_SEPARATOR . $upload_dir 
+            . DIRECTORY_SEPARATOR . $file_name;
+
+        // сохраняем изображение в файл
+        if( !file_put_contents( $upload_file_name, $image ) ):
+            $this->log( 'imageUpload: не удалось сохранить файл ' . $upload_file_name . '!' );
+            return json_encode( [ 'status' => 'error' ] );
+        endif;
+
+        // формируем ответ
+        $response[ 'status' ] = 'success';
+        $response[ 'user_id' ] = $body[ 'user_id' ];
+        $response[ 'for_type' ] = $body[ 'for_type' ];
+        $response[ 'for_id' ] = $body[ 'for_id' ];
+        $response[ 'absolute_url' ] = Config::get( 'app.image_domain' ) . DIRECTORY_SEPARATOR . $upload_dir . DIRECTORY_SEPARATOR . $file_name;
+        $response[ 'relative_url' ] = $upload_dir . DIRECTORY_SEPARATOR . $file_name;
+        $response[ 'filename' ] = $file_name;
+
+        return json_encode( $response );
     }
 
 

@@ -78,6 +78,10 @@ Route::group
 				// Создание статьи
 				// { user_id, auth_key, title, subject, subjectCategory, image, text, alias }
 				Route::post( '/api/article/create', 	'ApiController@createArticle' );
+
+				// Загрузка изображения
+				// { user_id, auth_key, image, for_type, for_id, filename }
+				Route::post( '/api/image/upload', 	'ApiController@imageUpload' );
 			}
 		);
 	}
