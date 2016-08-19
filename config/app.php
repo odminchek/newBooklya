@@ -10,6 +10,18 @@ return [
     'key' => env('APP_KEY'),
     'cipher' => 'AES-256-CBC',
     'log' => env('APP_LOG', 'errorlog'),
+
+    // сюда мы будем загружать пользовательские кратинки
+    'image_upload_dir' => __DIR__ 
+        . DIRECTORY_SEPARATOR 
+        . '..' 
+        . DIRECTORY_SEPARATOR 
+        . 'public' 
+        . DIRECTORY_SEPARATOR 
+        . 'uploads'
+        . DIRECTORY_SEPARATOR
+        . 'images',
+
     'providers' => [
         // Laravel Framework Service Providers...
         Illuminate\Auth\AuthServiceProvider::class,
