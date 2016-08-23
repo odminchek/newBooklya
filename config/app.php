@@ -52,8 +52,9 @@ return [
         // mongo
         Jenssegers\Mongodb\MongodbServiceProvider::class,
 
-        // oauth
-        Artdarek\OAuth\OAuthServiceProvider::class,
+        // oauth 2
+        LucaDegasperi\OAuth2Server\Storage\FluentStorageServiceProvider::class,
+        LucaDegasperi\OAuth2Server\OAuth2ServerServiceProvider::class,
     ],
 
     'aliases' => [
@@ -91,7 +92,7 @@ return [
         // mongo
         'Moloquent' => 'Jenssegers\Mongodb\Eloquent\Model',
 
-        // oauth
-        'OAuth'     => Artdarek\OAuth\Facade\OAuth::class,
+        // oauth2
+        'Authorizer' => LucaDegasperi\OAuth2Server\Facades\Authorizer::class,
     ],
 ];
