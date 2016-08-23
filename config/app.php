@@ -51,6 +51,9 @@ return [
 
         // mongo
         Jenssegers\Mongodb\MongodbServiceProvider::class,
+
+        // oauth
+        Artdarek\OAuth\OAuthServiceProvider::class,
     ],
 
     'aliases' => [
@@ -87,5 +90,8 @@ return [
 
         // mongo
         'Moloquent' => 'Jenssegers\Mongodb\Eloquent\Model',
+
+        // oauth
+        'OAuth'     => Artdarek\OAuth\Facade\OAuth::class,
     ],
 ];

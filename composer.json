@@ -8,7 +8,8 @@
         "php": ">=5.5.9",
         "laravel/framework": "5.2.*",
         "mongodb/mongodb": "^1.0.2",
-        "jenssegers/mongodb": "3.0.x"
+        "jenssegers/mongodb": "3.0.x",
+        "oriceon/oauth-5-laravel": "dev-master"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
