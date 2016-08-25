@@ -86,3 +86,13 @@ Route::group
 		);
 	}
 );
+
+
+
+/**
+	Oauth2
+*/
+
+Route::post( '/api/oauth/access_token', function() {
+	return Response::json( Authorizer::issueAccessToken() );
+});
