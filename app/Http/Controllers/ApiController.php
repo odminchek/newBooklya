@@ -701,11 +701,6 @@ class ApiController extends Controller
             return json_encode( [ 'status' => 'error' ] );
         endif;
 
-        // if( !ImageModel::find( $body[ 'image' ] ) ):
-        //     $this->log( 'createArticle: image с _id=' . $body[ 'image' ] . ' не существует!' );
-        //     return json_encode( [ 'status' => 'error' ] );
-        // endif;
-
         // проверка существования subjectCategory
         if( !SubjectCategoryModel::find( $body[ 'subjectCategory' ] ) ):
             $this->log( 'createArticle: subjectCategory с _id=' . $body[ 'subjectCategory' ] . ' не существует!' );
