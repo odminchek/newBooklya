@@ -17,7 +17,7 @@ class Kernel extends HttpKernel
         \Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode::class,
 
         // oauth2
-        \LucaDegasperi\OAuth2Server\Middleware\OAuthExceptionHandlerMiddleware::class,
+        \Odminchek\OAuth2Server\Middleware\OAuthExceptionHandlerMiddleware::class,
     ];
 
     /**
@@ -58,9 +58,9 @@ class Kernel extends HttpKernel
         'apiauth' => \App\Http\Middleware\ApiAuthMiddleware::class,
 
         // oauth2
-        'oauth' => \LucaDegasperi\OAuth2Server\Middleware\OAuthMiddleware::class,
-        'oauth-user' => \LucaDegasperi\OAuth2Server\Middleware\OAuthUserOwnerMiddleware::class,
-        'oauth-client' => \LucaDegasperi\OAuth2Server\Middleware\OAuthClientOwnerMiddleware::class,
-        'check-authorization-params' => \LucaDegasperi\OAuth2Server\Middleware\CheckAuthCodeRequestMiddleware::class,
+        'oauth' => \Odminchek\OAuth2Server\Middleware\OAuthMiddleware::class,
+        'oauth-user' => \Odminchek\OAuth2Server\Middleware\OAuthUserOwnerMiddleware::class,
+        'oauth-client' => \Odminchek\OAuth2Server\Middleware\OAuthClientOwnerMiddleware::class,
+        'check-authorization-params' => \Odminchek\OAuth2Server\Middleware\CheckAuthCodeRequestMiddleware::class,
     ];
 }
