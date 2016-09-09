@@ -15,6 +15,7 @@ use App\UserAuthModel;
 use App\MessageModel;
 use App\LessonModel;
 use Config;
+use App\OauthAccessTokenScopesModel;
 
 class ApiController extends Controller
 {
@@ -889,5 +890,38 @@ class ApiController extends Controller
         endif;
 
         return $userAuth;
+    }
+
+
+
+
+// for test
+
+    public function oauthTestFunction()
+    {
+        echo 'success';
+        // if( !$scopes = OauthAccessTokenScopesModel::where( 'access_token_id', '=', $token->getId() )->get() 
+        //     OR !$scopes = $scopes->toArray()
+        //     OR !is_array( $scopes )
+        //     OR empty( $scopes )
+        //     ):
+        //     return FALSE;
+        // endif;
+
+        // die( 'efef' );
+
+        // foreach( $scopes as $scope ):
+        //     $scopeEntity = new ScopeEntity( $this->getServer() );
+        //     $result[] =  $scopeEntity->hydrate( [ 'id' => $scope->id, 'description' => $scope->description ] ] );
+        // endforeach;
+
+        // if( !isset( $result )
+        //     OR !is_array( $result )
+        //     OR empty( $result )
+        //     ):
+        //     return FALSE;
+        // endif;
+
+        // return $result;
     }
 }

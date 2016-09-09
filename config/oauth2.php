@@ -6,7 +6,12 @@ return [
             'class' => 'League\OAuth2\Server\Grant\PasswordGrant',
             'access_token_ttl' => 604800,
             'callback' => '\App\PasswordGrantVerifier@verify',
-        ]
+        ],
+        // 'refresh_token' => [
+        //     'class' => '\League\OAuth2\Server\Grant\RefreshTokenGrant',
+        //     'access_token_ttl' => 3600,
+        //     'refresh_token_ttl' => 36000
+        // ]
     ],
 
     'token_type' => 'League\OAuth2\Server\TokenType\Bearer',

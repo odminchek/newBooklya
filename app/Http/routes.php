@@ -93,6 +93,13 @@ Route::group
 	Oauth2
 */
 
-Route::post( '/api/oauth/access_token', function() {
+// получение токена
+Route::post( '/api/oauth/access_token', /*[ 'middleware' => 'json',*/ function() {
+	// $body = json_decode( Request::input( 'body' ), TRUE );
+	// var_dump( $body );die;
 	return Authorizer::issueAccessToken();
-});
+} /*]*/ );
+
+
+// проверка работоспособности oauth2
+Route::post( '/api/oauth/test', 'ApiController@oauthTestFunction' )->middleware( 'oauth' );
