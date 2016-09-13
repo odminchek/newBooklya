@@ -55,12 +55,14 @@ Route::group
 	{
 		// Авторизация. Получаем auth_key для POST-запросов от пользователя
 		// { username, password }
-		Route::post( '/api/auth/signin', 		'ApiController@userSignIn' );
+		// Route::post( '/api/auth/signin', 		'ApiController@userSignIn' );
 
 		// Аутентификация
 		Route::group
 		(
-			[ 'middleware' => 'apiauth' ],
+			// [ 'middleware' => 'apiauth' ],
+			[ 'middleware' => 'oauth-user' ],
+
 			function()
 			{
 				// Добавление отзыва о пользователе
@@ -94,12 +96,6 @@ Route::group
 */
 
 // получение токена
-Route::post( '/api/oauth/access_token', /*[ 'middleware' => 'json',*/ function() {
-	// $body = json_decode( Request::input( 'body' ), TRUE );
-	// var_dump( $body );die;
+Route::post( '/api/oauth/access_token', [ 'middleware' => 'json', function() {
 	return Authorizer::issueAccessToken();
-} /*]*/ );
-
-
-// проверка работоспособности oauth2
-Route::post( '/api/oauth/test', 'ApiController@oauthTestFunction' )->middleware( 'oauth' );
+} ] );
